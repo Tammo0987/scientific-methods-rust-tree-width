@@ -32,6 +32,9 @@ static int compute_max_bag_size_of_order_local(
             ++current_tail_up_deg;
         }
     );
+    if (max_up_deg < current_tail_up_deg) {
+        max_up_deg = current_tail_up_deg;
+    }
     return max_up_deg + 1;
 }
 

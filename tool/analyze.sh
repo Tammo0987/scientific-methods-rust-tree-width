@@ -126,16 +126,7 @@ configure_rustc_private_runtime
 HOST_TARGET=$(rustc -vV | awk -F': ' '/^host: / { print $2 }')
 TARGET_TRIPLE=${ANALYZE_TARGET:-$HOST_TARGET}
 
-# Detect --solver from forwarded args so the output dir reflects which solver ran.
-SOLVER="native"
-prev=""
-for arg in "$@"; do
-    [[ "$prev" == "--solver" ]] && SOLVER="$arg"
-    [[ "$arg" == --solver=* ]] && SOLVER="${arg#--solver=}"
-    prev="$arg"
-done
-
-OUTDIR="$REPO/results/$CRATE/$SOLVER"
+OUTDIR="$REPO/results/$CRATE"
 MIR="$REPO/results/$CRATE/mir.jsonl"
 EXTRACTOR="$REPO/target/release/mir-extractor"
 ANALYZER="$REPO/target/release/analyzer"

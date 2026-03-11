@@ -3,25 +3,19 @@ use serde::Serialize;
 #[derive(Default)]
 pub struct Accumulator {
     total: usize,
-    timed_out: usize,
     values: Vec<u32>,
     safe_values: Vec<u32>,
     unsafe_values: Vec<u32>,
 }
 
 impl Accumulator {
-    pub fn add(&mut self, tw: Option<u32>, is_unsafe: bool) {
+    pub fn add(&mut self, tw: u32, is_unsafe: bool) {
         self.total += 1;
-        match tw {
-            Some(w) => {
-                self.values.push(w);
-                if is_unsafe {
-                    self.unsafe_values.push(w);
-                } else {
-                    self.safe_values.push(w);
-                }
-            }
-            None => self.timed_out += 1,
+        self.values.push(tw);
+        if is_unsafe {
+            self.unsafe_values.push(tw);
+        } else {
+            self.safe_values.push(tw);
         }
     }
 
@@ -39,8 +33,6 @@ impl Accumulator {
 
         Summary {
             total: self.total,
-            solved: self.values.len(),
-            timed_out: self.timed_out,
             all: group_stats(&self.values),
             safe: group_stats(&self.safe_values),
             r#unsafe: group_stats(&self.unsafe_values),
@@ -52,8 +44,6 @@ impl Accumulator {
 #[derive(Serialize)]
 pub struct Summary {
     pub total: usize,
-    pub solved: usize,
-    pub timed_out: usize,
     pub all: GroupStats,
     pub safe: GroupStats,
     pub r#unsafe: GroupStats,
@@ -103,8 +93,6 @@ impl Summary {
         println!("=== Treewidth Analysis Summary ===");
         println!();
         println!("Functions total:  {}", self.total);
-        println!("  Solved:         {}", self.solved);
-        println!("  Timed out:      {}", self.timed_out);
         println!();
         println!("All solved:");
         print_group(&self.all);
@@ -121,7 +109,7 @@ impl Summary {
             if count == 0 && tw > self.all.max as usize {
                 break;
             }
-            let bar_len = (count * 40 / self.solved.max(1)).max(if count > 0 { 1 } else { 0 });
+            let bar_len = (count * 40 / self.total.max(1)).max(if count > 0 { 1 } else { 0 });
             println!("  tw={tw:2}: {count:6}  {}", "#".repeat(bar_len));
         }
         let overflow: usize = self.distribution.iter().skip(15).sum();

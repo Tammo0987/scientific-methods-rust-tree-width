@@ -12,7 +12,7 @@ use graph::Graph;
 use rayon::prelude::*;
 use serde::Deserialize;
 use stats::Accumulator;
-use treewidth::{compute_oracle, ensure_oracle_available, Solver};
+use treewidth::{compute, compute_oracle, ensure_oracle_available};
 
 #[derive(Parser)]
 #[command(name = "analyzer", about = "Compute treewidth of MIR CFGs")]
@@ -32,19 +32,9 @@ struct Cli {
     #[arg(long, default_value_t = 500)]
     progress: usize,
 
-    /// Treewidth solver to use.
-    #[arg(long, default_value = "native", value_enum)]
-    solver: SolverArg,
-
     /// Cross-check native results against the FlowCutter FFI oracle.
     #[arg(long, default_value_t = false)]
     verify_oracle: bool,
-}
-
-#[derive(clap::ValueEnum, Clone)]
-enum SolverArg {
-    /// Pure Rust min-degree + min-fill elimination. Fast, no subprocess.
-    Native,
 }
 
 #[derive(Deserialize)]
@@ -76,10 +66,6 @@ fn main() -> anyhow::Result<()> {
 
     let records = read_records(&cli.input, cli.limit)?;
     let total = records.len();
-    let solver = match cli.solver {
-        SolverArg::Native => Solver::Native,
-    };
-
     if cli.verify_oracle {
         ensure_oracle_available()?;
         eprintln!("Oracle verification enabled: cross-checking native results against FlowCutter FFI.");
@@ -92,7 +78,7 @@ fn main() -> anyhow::Result<()> {
         .into_par_iter()
         .map(|rec| {
             let graph = Graph::from_edges(rec.blocks, &rec.edges);
-            let tw = solver.compute(&graph);
+            let tw = compute(&graph);
             let (oracle_treewidth, oracle_error) = if cli.verify_oracle {
                 match compute_oracle(&graph) {
                     Ok(value) => (Some(value), None),
@@ -229,7 +215,7 @@ fn write_csv(path: &PathBuf, rows: &[Row]) -> anyhow::Result<()> {
 fn build_summary(rows: &[Row]) -> stats::Summary {
     let mut acc = Accumulator::default();
     for row in rows {
-        acc.add(Some(row.treewidth), row.is_unsafe);
+        acc.add(row.treewidth, row.is_unsafe);
     }
     acc.into_summary()
 }
