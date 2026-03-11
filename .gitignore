@@ -17,3 +17,10 @@ devenv.local.yaml
 *.out
 *.pdf
 *.fdb_latexmk
+*.bbl
+*.blg
+*.bcf
+*.toc
+*.run.xml
+
+_minted/
