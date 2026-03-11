@@ -127,52 +127,13 @@ HOST_TARGET=$(rustc -vV | awk -F': ' '/^host: / { print $2 }')
 TARGET_TRIPLE=${ANALYZE_TARGET:-$HOST_TARGET}
 
 # Detect --solver from forwarded args so the output dir reflects which solver ran.
-SOLVER="auto"
+SOLVER="native"
 prev=""
 for arg in "$@"; do
     [[ "$prev" == "--solver" ]] && SOLVER="$arg"
     [[ "$arg" == --solver=* ]] && SOLVER="${arg#--solver=}"
     prev="$arg"
 done
-
-check_flow_cutter_solver() {
-    # If local sources are present, analyzer can build and use the in-process
-    # FlowCutter FFI path (no external binary required).
-    if [[ -d "$REPO/flow-cutter-pace17/src" ]]; then
-        return 0
-    fi
-
-    local bin="${FLOW_CUTTER_BIN:-flow_cutter_pace17}"
-    if [[ -z "$bin" ]]; then
-        cat >&2 <<EOF
-error: FLOW_CUTTER_BIN is empty.
-Set FLOW_CUTTER_BIN to the flow_cutter_pace17 executable path.
-EOF
-        exit 1
-    fi
-
-    if [[ "$bin" == */* ]]; then
-        if [[ ! -x "$bin" ]]; then
-            cat >&2 <<EOF
-error: FlowCutter binary not executable: $bin
-Set FLOW_CUTTER_BIN to the correct path, e.g.:
-  export FLOW_CUTTER_BIN=/absolute/path/to/flow_cutter_pace17
-EOF
-            exit 1
-        fi
-    elif ! command -v "$bin" >/dev/null 2>&1; then
-        cat >&2 <<EOF
-error: FlowCutter binary '$bin' not found in PATH.
-Either add it to PATH or set:
-  export FLOW_CUTTER_BIN=/absolute/path/to/flow_cutter_pace17
-EOF
-        exit 1
-    fi
-}
-
-if [[ "$SOLVER" == "flow-cutter" || "$SOLVER" == "flowcutter" ]]; then
-    check_flow_cutter_solver
-fi
 
 OUTDIR="$REPO/results/$CRATE/$SOLVER"
 MIR="$REPO/results/$CRATE/mir.jsonl"

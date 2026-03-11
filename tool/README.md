@@ -19,12 +19,12 @@ rustc (MIR)  ->  mir-extractor  ->  JSONL  ->  analyzer  ->  CSV + summary.json
 ./analyze.sh <crate-name> [analyzer-flags...]
 ```
 
-Outputs go to `results/<crate-name>/<solver>/`. The solver subfolder reflects `--solver` (default: `auto`).
+Outputs go to `results/<crate-name>/<solver>/`. The solver subfolder reflects `--solver` (default: `native`).
 
 ```bash
 ./analyze.sh test-crate
 ./analyze.sh std
-./analyze.sh test-crate --solver native
+./analyze.sh test-crate --verify-oracle
 ```
 
 The special crate name `std` extracts `core + alloc + std` via `-Z build-std`.
@@ -46,11 +46,11 @@ If you need a non-host target for `std` extraction, set:
 ANALYZE_TARGET=<target-triple> ./analyze.sh std
 ```
 
-## FlowCutter setup
+## FlowCutter oracle setup
 
-Preferred path: place the `flow-cutter-pace17` source tree next to this repo
-at `./flow-cutter-pace17/`. The analyzer will compile and call C++ functions
-directly via FFI (no temp files, no subprocess, no output parsing).
+Optional path: place the `flow-cutter-pace17` source tree next to this repo at
+`./flow-cutter-pace17/`. The analyzer will compile and call C++ functions
+directly via FFI as a verification oracle.
 
 ```bash
 git clone https://github.com/kit-algo/flow-cutter-pace17.git
@@ -63,14 +63,7 @@ Then run:
 
 ```bash
 cd /path/to/this/tool
-./analyze.sh std --solver flow-cutter
-```
-
-Fallback path: if the source tree is not present, the analyzer uses the
-`flow_cutter_pace17` binary via subprocess. In that case set:
-
-```bash
-export FLOW_CUTTER_BIN=/absolute/path/to/flow_cutter_pace17
+./analyze.sh std --verify-oracle
 ```
 
 ## Project layout
@@ -90,6 +83,4 @@ results/           output
 |---|---|---|
 | `MIR_OUTPUT` | stdout | Path to JSONL output file for `mir-extractor` |
 | `MIR_CRATES` | (all) | Comma-separated crate allowlist for `mir-extractor` |
-| `FLOW_CUTTER_BIN` | `flow_cutter_pace17` | FlowCutter executable name/path (used by `--solver flow-cutter`) |
-| `FLOW_CUTTER_TIMEOUT_SECS` | `30` | Per-function timeout for FlowCutter |
 | `RAYON_NUM_THREADS` | CPUs | Parallel solver threads in `analyzer` |

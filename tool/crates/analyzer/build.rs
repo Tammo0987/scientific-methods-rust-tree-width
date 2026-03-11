@@ -15,7 +15,7 @@ fn main() {
 
     if !(flow_root.exists() && flow_src.exists()) {
         println!(
-            "cargo:warning=FlowCutter sources not found at '{}'; using subprocess fallback.",
+            "cargo:warning=FlowCutter sources not found at '{}'; oracle checks will be unavailable.",
             flow_root.display()
         );
         return;
@@ -26,7 +26,7 @@ fn main() {
         Ok(v) => v,
         Err(_) => {
             println!(
-                "cargo:warning=Could not read '{}'; using subprocess fallback.",
+                "cargo:warning=Could not read '{}'; oracle checks will be unavailable.",
                 flow_src.display()
             );
             return;
@@ -43,7 +43,7 @@ fn main() {
 
     if sources.is_empty() {
         println!(
-            "cargo:warning=No FlowCutter C++ sources found in '{}'; using subprocess fallback.",
+            "cargo:warning=No FlowCutter C++ sources found in '{}'; oracle checks will be unavailable.",
             flow_src.display()
         );
         return;

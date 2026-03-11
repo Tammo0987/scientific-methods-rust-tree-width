@@ -100,8 +100,8 @@ extern "C" int flowcutter_compute_treewidth_from_edges(
             return 0;
         }
 
-        // FlowCutter reports bag size; treewidth is max_bag_size - 1.
-        *out_treewidth = static_cast<std::uint32_t>(best_bag_size - 1);
+        const int treewidth = std::max(1, best_bag_size - 1);
+        *out_treewidth = static_cast<std::uint32_t>(treewidth);
         return 0;
     } catch (...) {
         return -4;

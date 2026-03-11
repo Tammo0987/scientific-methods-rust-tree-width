@@ -28,33 +28,11 @@ impl Graph {
     pub fn edge_count(&self) -> usize {
         self.adj.iter().map(|a| a.len()).sum::<usize>() / 2
     }
-
-    /// Serialize to the PACE 2017 / DIMACS format expected by FlowCutter.
-    /// Vertices are 1-indexed in the output.
-    pub fn to_dimacs(&self) -> String {
-        let m = self.edge_count();
-        let mut lines = Vec::with_capacity(1 + m);
-        lines.push(format!("p tw {} {}", self.n, m));
-        for u in 0..self.n {
-            for &v in &self.adj[u] {
-                if u < v {
-                    lines.push(format!("{} {}", u + 1, v + 1));
-                }
-            }
-        }
-        lines.join("\n") + "\n"
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn dimacs_path() {
-        let g = Graph::from_edges(4, &[(0, 1), (1, 2), (2, 3)]);
-        assert!(g.to_dimacs().starts_with("p tw 4 3\n"));
-    }
 
     #[test]
     fn self_loops_ignored() {

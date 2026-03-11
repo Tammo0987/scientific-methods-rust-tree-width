@@ -8,22 +8,16 @@ function's CFG, and writes a CSV file plus a summary to stdout.
 ```bash
 cargo build --release -p analyzer
 
-./target/release/analyzer mir-data.jsonl --output results.csv
+./target/release/analyzer mir-data.jsonl --outdir results
 ```
 
-## Solvers
+## Solver
 
-Treewidth computation is abstracted behind a `Solver` enum with three variants,
-selectable via `--solver`:
+Production runs use the native Rust heuristic solver:
 
 | Variant | Flag | Description |
 |---|---|---|
-| `Auto` | `--solver auto` (default) | Native for ≤500 nodes, FlowCutter for larger |
-| `Native` | `--solver native` | Pure Rust, no subprocess |
-| `FlowCutter` | `--solver flowcutter` | FlowCutter subprocess |
-
-For the CFG graphs in this study (typically < 100 nodes) `auto` always uses the
-native solver.
+| `Native` | `--solver native` (default) | Pure Rust min-degree + min-fill elimination |
 
 ### Native solver
 
@@ -54,22 +48,14 @@ min-heap.  The simpler implementation is sufficient for graphs under ~500 nodes.
 only need the width, so we compute it inline during elimination and skip
 constructing the decomposition.
 
-### FlowCutter subprocess
-
-Invokes `flow_cutter_pace17 <tempfile>` directly (the C implementation from
-kit-algo/flow-cutter-pace17).  Timeout is enforced in Rust, so no external GNU
-`timeout` command is required on macOS/Linux.  On timeout, we send `SIGTERM`
-first (to let FlowCutter print its best decomposition) and then hard-kill if
-it does not exit promptly.  We parse the treewidth from bag lines rather than
-the `s` header, because FlowCutter's field order deviates from the PACE 2017
-spec.
-
-### FlowCutter FFI (preferred)
+### FlowCutter oracle
 
 If `../../flow-cutter-pace17/src` exists while building `analyzer`, build.rs
 compiles the C++ sources and links them into analyzer. In this mode we call
-FlowCutter C++ functions directly from Rust (no temp graph files, no process
-spawn, no string parsing).
+FlowCutter C++ functions directly from Rust as an optional verification oracle.
+
+Pass `--verify-oracle` to cross-check every native result against the oracle.
+The command exits non-zero if any mismatch is found.
 
 ## Output
 
@@ -81,17 +67,11 @@ histogram, and a comparison to the Java stdlib results from Gustedt et al.
 
 ## Parallelism
 
-Solver invocations run in parallel via rayon (one per CPU core by default).
+Native solver invocations run in parallel via rayon (one per CPU core by default).
 Set `RAYON_NUM_THREADS` to limit concurrency.
 
 ## Environment variables
 
 | Variable | Default | Description |
 |---|---|---|
-| `FLOW_CUTTER_BIN` | `flow_cutter_pace17` | FlowCutter binary name or path |
-| `FLOW_CUTTER_TIMEOUT_SECS` | `30` | Per-function time limit (FlowCutter only) |
-| `RAYON_NUM_THREADS` | number of CPUs | Parallel solver processes |
-
-When `--solver flow-cutter` is selected and FFI is not available, analyzer
-checks `FLOW_CUTTER_BIN` up front and exits immediately if the binary is
-missing.
+| `RAYON_NUM_THREADS` | number of CPUs | Parallel solver threads |
