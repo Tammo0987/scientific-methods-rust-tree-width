@@ -56,11 +56,20 @@ constructing the decomposition.
 
 ### FlowCutter subprocess
 
-Invokes `flow_cutter_pace17 <tempfile>` wrapped with `timeout` to enforce a
-per-function time limit.  FlowCutter runs indefinitely improving its answer
-until it receives SIGTERM, at which point it prints the best decomposition
-found.  We parse the treewidth from the bag lines of the output rather than the
-`s` header, because FlowCutter's field order deviates from the PACE 2017 spec.
+Invokes `flow_cutter_pace17 <tempfile>` directly (the C implementation from
+kit-algo/flow-cutter-pace17).  Timeout is enforced in Rust, so no external GNU
+`timeout` command is required on macOS/Linux.  On timeout, we send `SIGTERM`
+first (to let FlowCutter print its best decomposition) and then hard-kill if
+it does not exit promptly.  We parse the treewidth from bag lines rather than
+the `s` header, because FlowCutter's field order deviates from the PACE 2017
+spec.
+
+### FlowCutter FFI (preferred)
+
+If `../../flow-cutter-pace17/src` exists while building `analyzer`, build.rs
+compiles the C++ sources and links them into analyzer. In this mode we call
+FlowCutter C++ functions directly from Rust (no temp graph files, no process
+spawn, no string parsing).
 
 ## Output
 
@@ -82,3 +91,7 @@ Set `RAYON_NUM_THREADS` to limit concurrency.
 | `FLOW_CUTTER_BIN` | `flow_cutter_pace17` | FlowCutter binary name or path |
 | `FLOW_CUTTER_TIMEOUT_SECS` | `30` | Per-function time limit (FlowCutter only) |
 | `RAYON_NUM_THREADS` | number of CPUs | Parallel solver processes |
+
+When `--solver flow-cutter` is selected and FFI is not available, analyzer
+checks `FLOW_CUTTER_BIN` up front and exits immediately if the binary is
+missing.

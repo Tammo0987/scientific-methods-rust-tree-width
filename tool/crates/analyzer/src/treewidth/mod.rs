@@ -2,9 +2,14 @@ mod flowcutter;
 mod native;
 
 use crate::graph::Graph;
+pub use flowcutter::ensure_solver_available as ensure_flowcutter_available;
 pub use flowcutter::TwError;
 
 const NATIVE_THRESHOLD: usize = 500;
+
+pub fn native_threshold() -> usize {
+    NATIVE_THRESHOLD
+}
 
 pub enum Solver {
     Native,

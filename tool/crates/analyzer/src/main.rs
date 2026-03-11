@@ -12,7 +12,7 @@ use graph::Graph;
 use rayon::prelude::*;
 use serde::Deserialize;
 use stats::Accumulator;
-use treewidth::Solver;
+use treewidth::{ensure_flowcutter_available, native_threshold, Solver};
 
 #[derive(Parser)]
 #[command(name = "analyzer", about = "Compute treewidth of MIR CFGs")]
@@ -79,6 +79,12 @@ fn main() -> anyhow::Result<()> {
         SolverArg::Native => Solver::Native,
         SolverArg::FlowCutter => Solver::FlowCutter,
     };
+
+    let auto_needs_flowcutter = matches!(solver, Solver::Auto)
+        && records.iter().any(|rec| rec.blocks > native_threshold());
+    if matches!(solver, Solver::FlowCutter) || auto_needs_flowcutter {
+        ensure_flowcutter_available()?;
+    }
 
     eprintln!("Read {total} functions, computing treewidth in parallel…");
 

@@ -46,6 +46,33 @@ If you need a non-host target for `std` extraction, set:
 ANALYZE_TARGET=<target-triple> ./analyze.sh std
 ```
 
+## FlowCutter setup
+
+Preferred path: place the `flow-cutter-pace17` source tree next to this repo
+at `./flow-cutter-pace17/`. The analyzer will compile and call C++ functions
+directly via FFI (no temp files, no subprocess, no output parsing).
+
+```bash
+git clone https://github.com/kit-algo/flow-cutter-pace17.git
+cd flow-cutter-pace17
+./build.sh
+cd ..
+```
+
+Then run:
+
+```bash
+cd /path/to/this/tool
+./analyze.sh std --solver flow-cutter
+```
+
+Fallback path: if the source tree is not present, the analyzer uses the
+`flow_cutter_pace17` binary via subprocess. In that case set:
+
+```bash
+export FLOW_CUTTER_BIN=/absolute/path/to/flow_cutter_pace17
+```
+
 ## Project layout
 
 ```
@@ -63,4 +90,6 @@ results/           output
 |---|---|---|
 | `MIR_OUTPUT` | stdout | Path to JSONL output file for `mir-extractor` |
 | `MIR_CRATES` | (all) | Comma-separated crate allowlist for `mir-extractor` |
+| `FLOW_CUTTER_BIN` | `flow_cutter_pace17` | FlowCutter executable name/path (used by `--solver flow-cutter`) |
+| `FLOW_CUTTER_TIMEOUT_SECS` | `30` | Per-function timeout for FlowCutter |
 | `RAYON_NUM_THREADS` | CPUs | Parallel solver threads in `analyzer` |
