@@ -28,6 +28,23 @@ Outputs go to `results/<crate-name>/<solver>/`. The solver subfolder reflects `-
 ```
 
 The special crate name `std` extracts `core + alloc + std` via `-Z build-std`.
+By default this uses your host target triple.
+
+## macOS setup
+
+This project requires `nightly` + rustc internals for `mir-extractor`.
+
+```bash
+export PATH="$HOME/.cargo/bin:$PATH"
+rustup toolchain install nightly
+rustup component add --toolchain nightly rustc-dev rust-src llvm-tools-preview
+```
+
+If you need a non-host target for `std` extraction, set:
+
+```bash
+ANALYZE_TARGET=<target-triple> ./analyze.sh std
+```
 
 ## Project layout
 

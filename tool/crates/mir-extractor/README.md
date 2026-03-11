@@ -56,9 +56,11 @@ trigger crate (any crate that depends on std will do):
 MIR_OUTPUT=$(pwd)/stdlib-full.jsonl \
 RUSTC=$(pwd)/target/release/mir-extractor \
 cargo build -p test-crate \
-  -Z build-std=core,alloc,std \
-  --target x86_64-unknown-linux-gnu
+  -Z build-std=core,alloc,std
 ```
+
+If you need a specific target, add `--target <triple>`. By default, use the
+host triple.
 
 `cargo build` must be re-run from scratch (or the target crate touched) if the
 JSONL file was deleted — Cargo will not recompile unchanged crates.
