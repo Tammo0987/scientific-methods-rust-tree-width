@@ -50,9 +50,10 @@ constructing the decomposition.
 
 ### FlowCutter oracle
 
-If `../../flow-cutter-pace17/src` exists while building `analyzer`, build.rs
-compiles the C++ sources and links them into analyzer. In this mode we call
-FlowCutter C++ functions directly from Rust as an optional verification oracle.
+`flow-cutter-pace17` is a git submodule at `../../flow-cutter-pace17` relative
+to this crate. If the submodule is initialised (`git submodule update --init`),
+`build.rs` detects the `src/` directory, compiles the C++ sources, and links
+them into the crate via FFI as an optional verification oracle.
 
 Pass `--verify-oracle` to cross-check every native result against the oracle.
 The command exits non-zero if any mismatch is found.

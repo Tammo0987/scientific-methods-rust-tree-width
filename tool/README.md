@@ -48,21 +48,23 @@ ANALYZE_TARGET=<target-triple> ./analyze.sh std
 
 ## FlowCutter oracle setup
 
-Optional path: place the `flow-cutter-pace17` source tree next to this repo at
-`./flow-cutter-pace17/`. The analyzer will compile and call C++ functions
-directly via FFI as a verification oracle.
+`flow-cutter-pace17` is included as a git submodule at `./flow-cutter-pace17/`.
+When cloning this repository, initialise it with:
 
 ```bash
-git clone https://github.com/kit-algo/flow-cutter-pace17.git
-cd flow-cutter-pace17
-./build.sh
-cd ..
+git clone --recurse-submodules <repo-url>
 ```
 
-Then run:
+Or, if you already have a clone without the submodule:
 
 ```bash
-cd /path/to/this/tool
+git submodule update --init
+```
+
+The analyzer will automatically compile the C++ sources and link them via FFI
+as a verification oracle. Then run:
+
+```bash
 ./analyze.sh std --verify-oracle
 ```
 
