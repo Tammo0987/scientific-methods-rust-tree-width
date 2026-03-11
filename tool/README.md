@@ -19,7 +19,7 @@ rustc (MIR)  ->  mir-extractor  ->  JSONL  ->  analyzer  ->  CSV + summary.json
 ./analyze.sh <crate-name> [analyzer-flags...]
 ```
 
-Outputs go to `results/<crate-name>/<solver>/`. The solver subfolder reflects `--solver` (default: `native`).
+Outputs go to `results/<crate-name>/`. Analyzer flags such as `--verify-oracle` control verification behavior.
 
 ```bash
 ./analyze.sh test-crate
