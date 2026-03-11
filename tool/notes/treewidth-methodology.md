@@ -123,5 +123,78 @@ This comparison would be scientifically valuable for several reasons:
   compiler optimization difficulty in practice
 - **Granularity question**: how much treewidth information is lost when MIR desugars structured
   control flow into basic blocks
-- **Rust-specific FACs**: how `?`, labeled breaks, and closures affect the structural bound
+ - **Rust-specific FACs**: how `?`, labeled breaks, and closures affect the structural bound
   compared to Java, and whether Rust's tw bound is similar to C's (≤6)
+
+---
+
+## Result Assessment (std analysis)
+
+### Distribution
+
+| tw | count | % |
+|---|---|---|
+| 0 | 3,350 | 11.3% |
+| 1 | 21,765 | 73.3% |
+| 2 | 3,970 | 13.4% |
+| 3 | 521 | 1.8% |
+| 4 | 70 | 0.2% |
+| 5 | 17 | 0.06% |
+
+Mean: 1.065 — Median: 1 — Max: 5 — 0 timeouts — 29,693 functions total.
+
+All results are reproducible: the greedy elimination algorithms are fully deterministic
+(no randomness, `min_by_key` always picks the first minimum, iteration order is fixed).
+Upper bound means a smarter algorithm could return lower values for the same graph, but
+repeated runs of this tool always return identical results.
+
+### Plausibility
+
+- **tw=0 at 11.3%** consistent with the earlier estimate of ~11% for single-block functions
+- **Max=5** consistent with expectation that Rust's bound is ≤6 (comparable to C)
+- **Unsafe lower than safe** (mean 1.04 vs 1.07): unsafe functions are not structurally more
+  complex in terms of control flow — a non-obvious finding worth noting in the paper
+- **0 timeouts**: all functions small enough for the native greedy solver; FlowCutter never
+  invoked on the std dataset
+
+### Algorithm correctness
+
+The unit tests in `analyzer/src/treewidth/native.rs` verify exact results on the canonical
+examples from the reference table above (path→1, tree→1, C4→2, K4→3). The `contract`
+function correctly implements chordal elimination. Self-loops and duplicate edges are filtered
+in `Graph::from_edges`.
+
+### Known issue: test-crate expected values
+
+The comments in `test-crate/src/lib.rs` contain wrong predictions written before the analysis
+was run. The actual measurements are correct; the comments are not:
+
+| function | comment says | actual | reason |
+|---|---|---|---|
+| `trivial` | tw=0 | tw=1 | MIR emits 2 blocks even for `x + 1` |
+| `if_else` | tw=1 | tw=2 | diamond CFG = C4 = tw=2 by definition |
+| `nested_if` | tw=1 | tw=2 | same |
+| `simple_loop` | tw=1 | tw=2 | back-edge creates a cycle |
+| `match_three` | tw=1 | tw=2 | switch structure forms a cycle |
+
+These comments should be corrected before using test-crate as a validation example in any paper.
+
+---
+
+## Related Work for Our Approach
+
+Our method (greedy elimination on CFGs) is a natural combination not covered by a single
+prior paper, but draws on two well-established bodies of work:
+
+**For the heuristics:**
+- Kjærulff (1990), *"Triangulation of Graphs — Algorithms Giving Small Total State Space"*
+  (tech report, Aalborg University) — standard citation for min-fill and min-degree heuristics
+- Bodlaender (1998), *"A Partial k-Arboretum of Graphs with Bounded Treewidth"*
+  (Theoretical Computer Science) — survey covering elimination-based algorithms
+
+**For the program CFG angle:**
+- Thorup (1998) and Gustedt et al. (2001) — see sections above
+
+The empirical application of graph-theoretic greedy elimination to Rust MIR CFGs at scale
+appears to be novel. The contribution is the measurement methodology and the resulting
+distribution over a large standard library, not a new algorithm.
