@@ -1,3 +1,3 @@
 #!/bin/sh
 
-latexmk -pdf -pvc -interaction=nonstopmode proposal.tex
+latexmk -pdf -pvc -interaction=nonstopmode main.tex

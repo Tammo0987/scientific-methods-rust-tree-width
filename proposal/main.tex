@@ -1,0 +1,78 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage[top=2cm]{geometry}
+
+\usepackage[backend=biber, sorting=none]{biblatex}
+\addbibresource{references.bib}
+
+\title{%
+  Analysing the Treewidth of Rust Programs \\
+  \large Paper Proposal}
+
+\author{
+    Battini, Liam
+    \and
+    Haans, Geert
+    \and
+    Singh, Prabhjot
+    \and
+    Steffens, Tammo
+}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Forming of the Idea}
+
+Initially, we read a paper from our workgroup leader \cite{70be595fc13c49b985f1c3fe0868255b}, where we got the inspiration for our initial project idea.
+The paper mentions constructs about a structured program and the bounded treewidth for goto-free languages and focuses on the control flow instead of the data flow, which inspired us to look for papers about treewidths and control flow.
+
+\paragraph{Treewidth of Java Programs}
+
+In the paper \textit{Treewidth of Java Programs}~\cite{gustedt_treewidth_2002}, there are two main contributions.
+First, the authors present a subset of Java (label-free, which is similar to goto-free), which they relate to the analysis of the treewidth of goto-free C programs.
+They show that when comparing the two subsets of Java and C, the results are the same.
+Second, they present a tool to compute the treewidth of Java programs.
+To show that in practice the upper bounds of 4-6 are rarely reached, they apply their tool to analyse the treewidth of selected parts of the Java standard library.
+
+\paragraph{Control-Flow Graphs}
+To analyse the structural properties of programs such as treewidth, we consider control-flow graphs (CFGs).
+A CFG is a directed graph whose nodes correspond to basic blocks and whose edges represent possible transfers of control during execution~\cite{aho2006compilers}.
+This representation captures the branching and looping structure of a program.
+Accordingly, Gustedt et al~\cite{gustedt_treewidth_2002} analysed the treewidth of Java programs by computing the treewidth of their CFGs.
+To study Rust in a comparable way, we therefore require an appropriate CFG representation of Rust programs.
+
+\paragraph{Rust and MIR}
+Rust is a structured programming language that does not support unrestricted \texttt{goto}-like control flow as described in the Rust language specifications~\cite{rustlang_loop_exprs}.
+Given that it does not support \texttt{goto}-like control flow, it is feasible that we can make a clear comparison with the goto-free C language.
+However, there may be other language constructs in Rust which could cause problems for bounding the treewidth.
+We will investigate this.
+To investigate whether Rust has other language constructs which may cause problems, we use the Mid-level Intermediate Representation (MIR) which is provided by the Rust compiler~\cite{rustc_mir} and is commonly used as a CFG-based representation of Rust programs in program verification tools such as Prusti~\cite{prusti}.
+The MIR consists of basic blocks connected by explicit control-flow edges.
+As such, MIR directly induces a CFG for each function.
+This may allow us to extract the CFGs from Rust programs using an approach analogous to that of Gustedt et al~\cite{gustedt_treewidth_2002} and analyse their treewidth on a well-defined semantic representation.
+
+\paragraph{Rust Control-Flow Graphs Analysis}
+To analyse the treewidth of Rust programs, we need to extract the CFGs from Rust programs and compute their treewidth.
+To extract the CFGs, we can use the MIR representation of Rust programs.
+An existing tool, originally developed for data-flow-based vulnerability analysis of Rust programs ~\cite{Budde2024}, may be partially reusable for this purpose.
+
+\paragraph{Goal}
+For our project, we propose two possible contributions related to the analysis of the treewidth of Rust programs.
+The first is a theoretical contribution that analyses the influence of the borrow checker on the treewidth of Rust programs and how to relate it to the analysis of goto-free C programs, similar to the analysis of the treewidth of label-free Java programs.
+Selecting a suitable subset of Rust for this analysis is part of this contribution.
+The second contribution is a practical one, where we implement a tool to compute the treewidth of Rust programs.
+This tool will be used to analyse the treewidth in practice, e.g., analyse selected parts of the Rust standard library, to show that in practice the upper bounds of 4-6 are rarely reached.
+Depending on our results and the time we have, the scope of the contributions may be adjusted to fit the project.
+
+\vspace{1em}
+
+\noindent\textit{Declaration: We used generative AI for reviewing and fixing grammar, finding related projects and making our writing more concise.}
+
+\printbibliography
+
+\end{document}
