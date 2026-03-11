@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: analyze <crate-name> [analyzer-flags...]
+# Usage: analyze.sh <crate-name> [analyzer-flags...]
 #
 # Builds mir-extractor and analyzer (release), extracts MIR from <crate-name>,
 # computes treewidth, and writes all outputs to results/<crate-name>/.

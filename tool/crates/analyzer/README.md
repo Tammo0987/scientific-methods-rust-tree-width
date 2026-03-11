@@ -13,11 +13,9 @@ cargo build --release -p analyzer
 
 ## Solver
 
-Production runs use the native Rust heuristic solver:
-
-| Variant | Flag | Description |
-|---|---|---|
-| `Native` | `--solver native` (default) | Pure Rust min-degree + min-fill elimination |
+The analyzer always uses the native Rust heuristic solver. Pass `--verify-oracle`
+to additionally cross-check every result against the FlowCutter FFI oracle
+(requires the submodule to be initialised).
 
 ### Native solver
 
@@ -42,7 +40,7 @@ eliminated.  Adjacency lists are kept sorted throughout to make the set-union
 merge in each elimination step efficient.
 
 **Complexity**: O(n³) in the worst case, versus FlowCutter's O(n log n) with a
-min-heap.  The simpler implementation is sufficient for graphs under ~500 nodes.
+min-heap.  For CFG-sized graphs this is fast enough in practice.
 
 **Deliberate omission**: FlowCutter returns an explicit tree decomposition.  We
 only need the width, so we compute it inline during elimination and skip
