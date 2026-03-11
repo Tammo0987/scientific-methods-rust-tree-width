@@ -1,0 +1,30 @@
+\section{Related Work}
+\label{sec:related-work}
+
+\subsection{Treewidth of Structured Programs}
+\label{subsec:rw-treewidth-structured}
+
+% - Thorup (1998): treewidth \leq 6 for goto-free C; linear-time register allocation
+% - Bodlaender, Gustedt, Telle (1998): linear-time register allocation for fixed number of registers
+
+\subsection{Treewidth of Java Programs}
+\label{subsec:rw-java}
+
+Gustedt, Mæhle, and Telle~\cite{gustedt_treewidth_2002} investigate whether Thorup's result for \texttt{goto}-free C~\cite{thorup_1998} carries over to Java.
+Thorup showed that \texttt{goto}-free C programs have CFG treewidth at most~6, using the notion of \emph{flow-affecting constructs} (FACs): language constructs that add non-local control-flow edges and raise treewidth by at most~1 each.
+
+Java has no \texttt{goto}, but its labeled \texttt{break} and \texttt{continue} statements are expressively equivalent to \texttt{goto}.
+Consequently, full Java programs can have arbitrarily high treewidth.
+Restricting to a label-free subset eliminates this issue: label-free Java has exactly four FACs (\texttt{break}, \texttt{continue}, \texttt{return}, and \texttt{short-circuit evaluation}), giving a treewidth bound of at most~$2 + 4 = 6$.
+
+To complement this theoretical result, the authors implement a tool that computes tree decompositions of Java CFGs and apply it to 9387 methods from the Java standard library.
+The average treewidth is~2.7 and the maximum observed is~5, with over 95\% of methods having treewidth at most~3, which is well below the theoretical bound.
+
+This paper is directly relevant to our work: it establishes both a theoretical treewidth bound and empirical baselines for a real-world language, serving as the primary comparison point for our analogous analysis of Rust programs via MIR.
+
+\subsection{Static Analysis of Rust}
+\label{subsec:rw-rust-analysis}
+
+% - Prusti: formal verification via MIR
+% - Budde (2024): data-flow vulnerability analysis; CFG extraction tooling we may reuse
+% - Other MIR-based tools

@@ -1,0 +1,24 @@
+\section{Background}
+\label{sec:background}
+
+\subsection{Control-Flow Graphs}
+\label{subsec:cfg}
+
+Thorup~\cite{thorup_1998} states control-flow graphs (CFGs) are graphs where nodes represent basic blocks and edges represent possible control flow paths between them. According to Allen~\cite{control_flow_analysis}, basic blocks are straight-line sequence of instructions that have single entry and exit points, where inside a block no jumps are allowed and disallows jumps from outside the block into the middle of the block. The edges in a CFG sets the constraint on how execution can flow between these blocks. 
+
+The topology of CFGs is determined by program's control structure. Sequential statements produce linear chains of basic blocks, while additional control constructs such as conditionals, loops and function exits makes the flow between nodes more complicated. For example, loops creates edges that point back to earlier blocks in the graph. 
+
+% - Definition: nodes = basic blocks, edges = control transfers
+% - Relationship between program structure and CFG topology
+% - CFG treewidth as a proxy for program complexity
+
+\subsection{Treewidth}
+\label{subsec:treewidth}
+Treewidth is a measurement on how "tree-like" a graph is and it can be measured on any graph. This is useful because problems that are more "tree-like" can be solved faster, meaning a lower treewidth means it is quicker to solve the problem. 
+
+\subsubsection{Tree decomposition}
+In order to measure the treewidth of a graph, a tree decomposition must first be created from the given graph. This can be done by representing the original graph \texttt{G = (V,E)} in a tree \texttt{T} with overlapping sets of nodes, known as bags. The constraints for a tree decomposition, is that every node in the graph must be covered in at least one bag which gurantees every node is covered in th
+
+% - Definition of treewidth (tree decomposition)
+% - Relevance: bounded treewidth enables efficient dynamic programming
+% - Known bounds for structured programs (Thorup, Gustedt et al.)

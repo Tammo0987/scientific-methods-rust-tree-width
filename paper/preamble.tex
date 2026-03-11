@@ -1,0 +1,49 @@
+% Encoding & font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Page layout
+\usepackage[a4paper, margin=2.5cm]{geometry}
+
+
+% Mathematics
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+% Graphics & figures
+\usepackage{graphicx}
+\usepackage{float}              % [H] placement
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Code listings
+\usepackage{listings}
+\usepackage{xcolor}
+
+% References & hyperlinks
+\usepackage[
+  backend  = biber,
+  style    = numeric,
+  sorting  = none,
+]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = blue,
+}
+
+% syntax highlighting for code examples
+\usepackage{minted}
+
+% Miscellaneous
+\usepackage{todonotes}          % \todo{...} margin notes during drafting
