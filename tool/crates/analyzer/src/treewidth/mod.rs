@@ -2,28 +2,13 @@ mod flowcutter;
 mod native;
 
 use crate::graph::Graph;
+pub use flowcutter::ensure_oracle_available;
 pub use flowcutter::TwError;
 
-const NATIVE_THRESHOLD: usize = 500;
-
-pub enum Solver {
-    Native,
-    FlowCutter,
-    Auto,
+pub fn compute(g: &Graph) -> u32 {
+    native::compute(g)
 }
 
-impl Solver {
-    pub fn compute(&self, g: &Graph) -> Result<u32, TwError> {
-        match self {
-            Solver::Native => Ok(native::compute(g)),
-            Solver::FlowCutter => flowcutter::compute(g),
-            Solver::Auto => {
-                if g.n <= NATIVE_THRESHOLD {
-                    Ok(native::compute(g))
-                } else {
-                    flowcutter::compute(g)
-                }
-            }
-        }
-    }
+pub fn compute_oracle(g: &Graph) -> Result<u32, TwError> {
+    flowcutter::compute_oracle(g)
 }

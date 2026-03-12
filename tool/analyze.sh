@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Usage: analyze <crate-name> [analyzer-flags...]
+# Usage: analyze.sh <crate-name> [analyzer-flags...]
 #
 # Builds mir-extractor and analyzer (release), extracts MIR from <crate-name>,
 # computes treewidth, and writes all outputs to results/<crate-name>/.
@@ -126,16 +126,7 @@ configure_rustc_private_runtime
 HOST_TARGET=$(rustc -vV | awk -F': ' '/^host: / { print $2 }')
 TARGET_TRIPLE=${ANALYZE_TARGET:-$HOST_TARGET}
 
-# Detect --solver from forwarded args so the output dir reflects which solver ran.
-SOLVER="auto"
-prev=""
-for arg in "$@"; do
-    [[ "$prev" == "--solver" ]] && SOLVER="$arg"
-    [[ "$arg" == --solver=* ]] && SOLVER="${arg#--solver=}"
-    prev="$arg"
-done
-
-OUTDIR="$REPO/results/$CRATE/$SOLVER"
+OUTDIR="$REPO/results/$CRATE"
 MIR="$REPO/results/$CRATE/mir.jsonl"
 EXTRACTOR="$REPO/target/release/mir-extractor"
 ANALYZER="$REPO/target/release/analyzer"

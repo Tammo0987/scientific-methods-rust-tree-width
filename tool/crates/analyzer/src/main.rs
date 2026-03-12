@@ -12,7 +12,7 @@ use graph::Graph;
 use rayon::prelude::*;
 use serde::Deserialize;
 use stats::Accumulator;
-use treewidth::Solver;
+use treewidth::{compute, compute_oracle, ensure_oracle_available};
 
 #[derive(Parser)]
 #[command(name = "analyzer", about = "Compute treewidth of MIR CFGs")]
@@ -32,19 +32,9 @@ struct Cli {
     #[arg(long, default_value_t = 500)]
     progress: usize,
 
-    /// Treewidth solver to use.
-    #[arg(long, default_value = "auto", value_enum)]
-    solver: SolverArg,
-}
-
-#[derive(clap::ValueEnum, Clone)]
-enum SolverArg {
-    /// Native Rust for small graphs (≤500 nodes), FlowCutter subprocess for large.
-    Auto,
-    /// Pure Rust min-degree + min-fill elimination. Fast, no subprocess.
-    Native,
-    /// FlowCutter subprocess. Supports arbitrarily large graphs.
-    FlowCutter,
+    /// Cross-check native results against the FlowCutter FFI oracle.
+    #[arg(long, default_value_t = false)]
+    verify_oracle: bool,
 }
 
 #[derive(Deserialize)]
@@ -64,7 +54,9 @@ struct Row {
     blocks: usize,
     edges: usize,
     stmt_count: usize,
-    treewidth: Option<u32>,
+    treewidth: u32,
+    oracle_treewidth: Option<u32>,
+    oracle_error: Option<String>,
     is_unsafe: bool,
 }
 
@@ -74,11 +66,10 @@ fn main() -> anyhow::Result<()> {
 
     let records = read_records(&cli.input, cli.limit)?;
     let total = records.len();
-    let solver = match cli.solver {
-        SolverArg::Auto => Solver::Auto,
-        SolverArg::Native => Solver::Native,
-        SolverArg::FlowCutter => Solver::FlowCutter,
-    };
+    if cli.verify_oracle {
+        ensure_oracle_available()?;
+        eprintln!("Oracle verification enabled: cross-checking native results against FlowCutter FFI.");
+    }
 
     eprintln!("Read {total} functions, computing treewidth in parallel…");
 
@@ -86,10 +77,16 @@ fn main() -> anyhow::Result<()> {
     let rows: Vec<Row> = records
         .into_par_iter()
         .map(|rec| {
-            let tw = solver
-                .compute(&Graph::from_edges(rec.blocks, &rec.edges))
-                .map_err(|e| eprintln!("WARN: '{}': {e}", rec.name))
-                .ok();
+            let graph = Graph::from_edges(rec.blocks, &rec.edges);
+            let tw = compute(&graph);
+            let (oracle_treewidth, oracle_error) = if cli.verify_oracle {
+                match compute_oracle(&graph) {
+                    Ok(value) => (Some(value), None),
+                    Err(e) => (None, Some(e.to_string())),
+                }
+            } else {
+                (None, None)
+            };
 
             if cli.progress > 0 {
                 let done = completed.fetch_add(1, Ordering::Relaxed) + 1;
@@ -105,10 +102,41 @@ fn main() -> anyhow::Result<()> {
                 edges: rec.edges.len(),
                 stmt_count: rec.stmt_count,
                 treewidth: tw,
+                oracle_treewidth,
+                oracle_error,
                 is_unsafe: rec.is_unsafe,
             }
         })
         .collect();
+
+    if cli.verify_oracle {
+        let oracle_errors = collect_oracle_errors(&rows);
+        if !oracle_errors.is_empty() {
+            for line in oracle_errors.iter().take(20) {
+                eprintln!("ORACLE ERROR: {line}");
+            }
+            anyhow::bail!(
+                "oracle verification failed because {} function(s) could not be checked",
+                oracle_errors.len()
+            );
+        }
+
+        let mismatches = collect_oracle_mismatches(&rows);
+        if !mismatches.is_empty() {
+            for line in mismatches.iter().take(20) {
+                eprintln!("MISMATCH: {line}");
+            }
+            anyhow::bail!(
+                "oracle verification failed for {} function(s)",
+                mismatches.len()
+            );
+        }
+
+        eprintln!(
+            "Oracle verification passed: checked {} function(s), 0 mismatches.",
+            rows.len()
+        );
+    }
 
     write_csv(&cli.outdir.join("results.csv"), &rows)?;
     print_top(&rows, 20);
@@ -120,6 +148,28 @@ fn main() -> anyhow::Result<()> {
     summary.print();
 
     Ok(())
+}
+
+fn collect_oracle_mismatches(rows: &[Row]) -> Vec<String> {
+    rows.iter()
+        .filter_map(|row| match row.oracle_treewidth {
+            Some(oracle) if row.treewidth != oracle => Some(format!(
+                "{}: native={} oracle={}",
+                row.name, row.treewidth, oracle
+            )),
+            _ => None,
+        })
+        .collect()
+}
+
+fn collect_oracle_errors(rows: &[Row]) -> Vec<String> {
+    rows.iter()
+        .filter_map(|row| {
+            row.oracle_error
+                .as_ref()
+                .map(|err| format!("{}: {err}", row.name))
+        })
+        .collect()
 }
 
 fn read_records(path: &PathBuf, limit: usize) -> anyhow::Result<Vec<FunctionRecord>> {
@@ -150,15 +200,11 @@ fn write_csv(path: &PathBuf, rows: &[Row]) -> anyhow::Result<()> {
     );
     writeln!(w, "name,crate,blocks,edges,stmt_count,treewidth,is_unsafe")?;
     for row in rows {
-        let tw = row
-            .treewidth
-            .map(|v| v.to_string())
-            .unwrap_or_else(|| "timeout".into());
         let name = row.name.replace('"', "\"\"");
         writeln!(
             w,
-            "\"{name}\",{},{},{},{},{tw},{}",
-            row.krate, row.blocks, row.edges, row.stmt_count, row.is_unsafe as u8
+            "\"{name}\",{},{},{},{},{},{}",
+            row.krate, row.blocks, row.edges, row.stmt_count, row.treewidth, row.is_unsafe as u8
         )?;
     }
     w.flush()?;
@@ -175,16 +221,11 @@ fn build_summary(rows: &[Row]) -> stats::Summary {
 }
 
 fn print_top(rows: &[Row], n: usize) {
-    let mut solved: Vec<&Row> = rows.iter().filter(|r| r.treewidth.is_some()).collect();
-    solved.sort_by_key(|r| std::cmp::Reverse(r.treewidth.unwrap()));
+    let mut solved: Vec<&Row> = rows.iter().collect();
+    solved.sort_by_key(|r| std::cmp::Reverse(r.treewidth));
     println!("\nTop {n} highest treewidth:");
     println!("{:<5}  {:<7}  name", "tw", "blocks");
     for row in solved.iter().take(n) {
-        println!(
-            "{:<5}  {:<7}  {}",
-            row.treewidth.unwrap(),
-            row.blocks,
-            row.name
-        );
+        println!("{:<5}  {:<7}  {}", row.treewidth, row.blocks, row.name);
     }
 }

@@ -19,12 +19,12 @@ rustc (MIR)  ->  mir-extractor  ->  JSONL  ->  analyzer  ->  CSV + summary.json
 ./analyze.sh <crate-name> [analyzer-flags...]
 ```
 
-Outputs go to `results/<crate-name>/<solver>/`. The solver subfolder reflects `--solver` (default: `auto`).
+Outputs go to `results/<crate-name>/`. Analyzer flags such as `--verify-oracle` control verification behavior.
 
 ```bash
 ./analyze.sh test-crate
 ./analyze.sh std
-./analyze.sh test-crate --solver native
+./analyze.sh test-crate --verify-oracle
 ```
 
 The special crate name `std` extracts `core + alloc + std` via `-Z build-std`.
@@ -44,6 +44,28 @@ If you need a non-host target for `std` extraction, set:
 
 ```bash
 ANALYZE_TARGET=<target-triple> ./analyze.sh std
+```
+
+## FlowCutter oracle setup
+
+`flow-cutter-pace17` is included as a git submodule at `./flow-cutter-pace17/`.
+When cloning this repository, initialise it with:
+
+```bash
+git clone --recurse-submodules <repo-url>
+```
+
+Or, if you already have a clone without the submodule:
+
+```bash
+git submodule update --init
+```
+
+The analyzer will automatically compile the C++ sources and link them via FFI
+as a verification oracle. Then run:
+
+```bash
+./analyze.sh std --verify-oracle
 ```
 
 ## Project layout
