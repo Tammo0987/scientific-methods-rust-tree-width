@@ -3,7 +3,7 @@
 
 \subsection{Rust in a Nutshell}
 \label{subsec:rust-in-a-nutshell}
-Rust is a systems programming language designed to combine low-level control over memory with strong compile-time safety guarantees. In contrast to languages such as Java, Rust does not rely on a garbage collector to reclaim memory at runtime. Instead, Rust uses a static discipline based on \emph{ownership}, \emph{borrowing}, and \emph{lifetimes} to ensure memory safety and data-race freedom at compile time. We will shortly explain what these concepts entail and why they are relevant. For further reading on this topic, we recommend reading the relevant chapters of the Rust Book \cite{rust-book-borrowing,rust-book-ownership,rust-book-lifetimes,rust-by-example-borrowing,rust-by-example-lifetimes}.
+Rust is a systems programming language designed to combine low-level control over memory with strong compile-time safety guarantees. In contrast to languages such as Java, Rust does not rely on a garbage collector to reclaim memory at runtime. Instead, Rust uses a static discipline based on \emph{ownership}, \emph{borrowing}, and \emph{lifetimes} to ensure memory safety and data-race freedom at compile time. We will shortly explain what these concepts entail and why they are relevant. For further reading on this topic, we recommend reading the relevant chapters of the Rust Book \cite{rust_book_borrowing,rust_book_ownership,rust_book_lifetimes,rust_by_example_borrowing,rust_by_example_lifetimes}.
 
 \paragraph{How Rust differs from Java.}
 Java manages memory automatically through garbage collection. Objects are typically allocated on the heap and can be referenced by multiple aliases at the same time. The programmer does not explicitly control when memory is freed; instead, this is handled by the runtime. This design makes programming convenient, but it comes with runtime overhead and leaves certain correctness issues, such as race conditions or misuse of mutable shared state, to be handled through additional language mechanisms.
@@ -25,14 +25,14 @@ The key point is that ownership is not merely a runtime concept; it is part of t
 \paragraph{Borrowing.}
 In practice, programs often need temporary access to a value without taking ownership of it. Rust supports this through \emph{borrowing}. A borrow is a reference to a value owned elsewhere. There are two main kinds of borrows:
 \begin{itemize}
-    \item \emph{Shared borrows} (\texttt{\&T}), which allow read-only access.
-    \item \emph{Mutable borrows} (\texttt{\&mut T}), which allow modification.
+	\item \emph{Shared borrows} (\texttt{\&T}), which allow read-only access.
+	\item \emph{Mutable borrows} (\texttt{\&mut T}), which allow modification.
 \end{itemize}
 
 Rust enforces strict aliasing rules:
 \begin{itemize}
-    \item any number of shared borrows may coexist, or
-    \item exactly one mutable borrow may exist,
+	\item any number of shared borrows may coexist, or
+	\item exactly one mutable borrow may exist,
 \end{itemize}
 but not both at the same time.
 
@@ -61,13 +61,13 @@ For this project, the important observation is that Rust programs are not charac
 % - Relevant constructs: loops, break/continue with labels, closures, async
 % - Comparison with goto-free C and label-free Java subsets
 
-Rust uses predominantly \emph{structured} control flow. At the source level, ordinary program execution is expressed through constructs such as conditional expressions, pattern matching, and loops, rather than through unrestricted jumps. In particular, Rust provides \texttt{if}-expressions, \texttt{match}-expressions, and several loop forms, including \texttt{loop}, \texttt{while}, and \texttt{for}. The language also supports \texttt{break} and \texttt{continue}, and these may be directed to an enclosing labeled loop, but they remain confined to structured looping constructs rather than providing a general \texttt{goto}-style jump mechanism.  
+Rust uses predominantly \emph{structured} control flow. At the source level, ordinary program execution is expressed through constructs such as conditional expressions, pattern matching, and loops, rather than through unrestricted jumps. In particular, Rust provides \texttt{if}-expressions, \texttt{match}-expressions, and several loop forms, including \texttt{loop}, \texttt{while}, and \texttt{for}. The language also supports \texttt{break} and \texttt{continue}, and these may be directed to an enclosing labeled loop, but they remain confined to structured looping constructs rather than providing a general \texttt{goto}-style jump mechanism.
 
 % https://doc.rust-lang.org/reference/expressions/loop-expr.html
 
 This is important for our purposes because structured control flow is one of the main reasons why the control-flow graphs of many real programs tend to remain relatively simple. Prior work on bounded treewidth for goto-free or label-free language fragments exploits exactly this phenomenon: if the language restricts arbitrary jumps, then the resulting control flow is largely determined by nesting and sequencing of structured constructs. Rust appears similar in this respect, since its ordinary source-level control flow is likewise organised around structured constructs rather than unrestricted transfer of control.
 
-There are, however, several Rust features that make the overall picture richer than in a basic structured language fragment. First, labeled \texttt{break} and \texttt{continue} allow control to target an outer loop, which introduces non-local but still structured exits. Second, closures may capture values from their surrounding environment, which means that local control-flow reasoning may interact with ownership and borrowing of captured state. Third, asynchronous Rust introduces \texttt{async} functions, blocks, and closures, which are compiled into \texttt{Future}-producing state machines rather than executing immediately in direct style. These features do not turn Rust into an unstructured language, but they do mean that the eventual compiler representation may contain control-flow patterns that are less direct than the source code initially suggests.  
+There are, however, several Rust features that make the overall picture richer than in a basic structured language fragment. First, labeled \texttt{break} and \texttt{continue} allow control to target an outer loop, which introduces non-local but still structured exits. Second, closures may capture values from their surrounding environment, which means that local control-flow reasoning may interact with ownership and borrowing of captured state. Third, asynchronous Rust introduces \texttt{async} functions, blocks, and closures, which are compiled into \texttt{Future}-producing state machines rather than executing immediately in direct style. These features do not turn Rust into an unstructured language, but they do mean that the eventual compiler representation may contain control-flow patterns that are less direct than the source code initially suggests.
 
 % https://doc.rust-lang.org/book/ch13-01-closures.html
 
@@ -80,15 +80,15 @@ For the present project, the key observation is therefore the following: Rust so
 % - Basic blocks and explicit control-flow edges in MIR
 % - Why MIR is a suitable CFG representation for this analysis
 
-The Rust compiler does not analyse most properties directly on the surface syntax of the language. Instead, after parsing and earlier compilation stages, it lowers functions into an internal representation called the \emph{Mid-level Intermediate Representation} (MIR). In the compiler documentation, MIR is explicitly described as being essentially a control-flow graph: it consists of basic blocks containing simple typed statements, together with explicit control-flow transfers between those blocks. 
+The Rust compiler does not analyse most properties directly on the surface syntax of the language. Instead, after parsing and earlier compilation stages, it lowers functions into an internal representation called the \emph{Mid-level Intermediate Representation} (MIR). In the compiler documentation, MIR is explicitly described as being essentially a control-flow graph: it consists of basic blocks containing simple typed statements, together with explicit control-flow transfers between those blocks.
 
 % https://rustc-dev-guide.rust-lang.org/overview.html
 
-A basic block in MIR is a sequence of statements that execute in order, followed by a \emph{terminator}. Statements represent operations with a single successor, whereas terminators represent control transfers and may have multiple successors. This includes, for example, branching, function calls, drops, and returns. Consequently, once a function has been lowered to MIR, its execution order is no longer implicit in nested source syntax; instead, it is represented explicitly as a graph whose nodes are basic blocks and whose edges correspond to possible transfers of control. 
+A basic block in MIR is a sequence of statements that execute in order, followed by a \emph{terminator}. Statements represent operations with a single successor, whereas terminators represent control transfers and may have multiple successors. This includes, for example, branching, function calls, drops, and returns. Consequently, once a function has been lowered to MIR, its execution order is no longer implicit in nested source syntax; instead, it is represented explicitly as a graph whose nodes are basic blocks and whose edges correspond to possible transfers of control.
 
 % https://rustc-dev-guide.rust-lang.org/mir/index.html
 
-This makes MIR particularly suitable as the basis for our analysis. First, it provides exactly the kind of CFG representation needed for graph-theoretic reasoning, such as treewidth analysis. Second, MIR is also the level at which the compiler performs several flow-sensitive analyses. The compiler development guide notes, for example, that dataflow effects are associated with MIR statements, terminators, and even outgoing edges of terminators. Similarly, region inference and borrow checking are phrased in terms of locations in the MIR control-flow graph, where a location is identified by a basic block together with a position inside that block.  
+This makes MIR particularly suitable as the basis for our analysis. First, it provides exactly the kind of CFG representation needed for graph-theoretic reasoning, such as treewidth analysis. Second, MIR is also the level at which the compiler performs several flow-sensitive analyses. The compiler development guide notes, for example, that dataflow effects are associated with MIR statements, terminators, and even outgoing edges of terminators. Similarly, region inference and borrow checking are phrased in terms of locations in the MIR control-flow graph, where a location is identified by a basic block together with a position inside that block.
 
 %https://rustc-dev-guide.rust-lang.org/mir/dataflow.html
 

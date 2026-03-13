@@ -6,7 +6,7 @@
 
 Our methodology consists of three stages.
 First, we extract the CFG of each function by intercepting the Rust compiler pipeline after MIR optimisation.
-Second, we compute the treewidth of each extracted CFG using \texttt{FlowCutter}~\cite{flowcutter}.
+Second, we compute the treewidth of each extracted CFG using \texttt{FlowCutter}~\cite{strasser_2017}.
 Third, we aggregate the per-function treewidth values into a distribution and derive summary statistics.
 
 As established in Section~\ref{sec:rust-and-mir}, MIR is the representation at which the Rust compiler performs its own flow-sensitive analyses, making it the natural level at which to study the structural complexity of Rust programs.
@@ -25,14 +25,14 @@ For example, a generic function \texttt{fn push<T>} gives rise to distinct entri
 
 Each MIR basic block becomes a node and each control-flow edge between blocks becomes an edge in the CFG.
 Edges into \emph{cleanup blocks}, basic blocks only reachable via a Rust panic or unwind, are excluded, restricting the graph to normal execution paths.
-This is analogous to the treatment in Gustedt et al.~\cite{gustedt_treewidth_2002}, where Java exceptions are absent from the CFG representation by construction.
+This is analogous to the treatment in Gustedt et al.~\cite{gustedt_2002}, where Java exceptions are absent from the CFG representation by construction.
 Because treewidth is defined on simple undirected graphs, multi-edges are deduplicated and edges are treated as unordered pairs.
 The result is serialised as a JSONL record per function for downstream analysis.
 
 \subsection{Treewidth Computation}
 \label{subsec:treewidth-computation}
 
-Treewidth is computed from the serialised CFGs using \texttt{FlowCutter}~\cite{flowcutter}.
+Treewidth is computed from the serialised CFGs using \texttt{FlowCutter}~\cite{strasser_2017}.
 Across the standard library, this covers all 29,693 functions, processed in parallel with one solver per CPU core.
 The computation is fully deterministic, ensuring that repeated runs on the same input produce identical results.
 
@@ -42,7 +42,7 @@ The full distribution over treewidth values is reported for all functions combin
 \subsection{Discussion}
 \label{subsec:methodology-discussion}
 
-Gustedt et al.~\cite{gustedt_treewidth_2002} are the closest prior work to ours, but the two studies answer subtly different questions.
+Gustedt et al.~\cite{gustedt_2002} are the closest prior work to ours, but the two studies answer subtly different questions.
 Following Thorup~\cite{thorup_1998}, Gustedt et al.\ ask: \emph{what does the structure of the language guarantee?}
 We ask: \emph{what do real Rust programs actually look like, after the compiler has processed them?}
 These are complementary, not competing, perspectives.

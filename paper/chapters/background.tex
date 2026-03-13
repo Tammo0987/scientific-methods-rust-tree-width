@@ -4,7 +4,7 @@
 \subsection{Control-Flow Graphs}
 \label{subsec:cfg}
 
-Thorup~\cite{thorup_1998} states control-flow graphs (CFGs) are graphs where nodes represent basic blocks and edges represent possible control flow paths between them. According to Allen~\cite{control_flow_analysis}, basic blocks are straight-line sequences of instructions that have single entry and exit points, where no jumps are allowed inside the block, and jumps from outside the block into the middle are disallowed. The edges in a CFG set the constraint on how execution can flow between these blocks.
+Thorup~\cite{thorup_1998} states control-flow graphs (CFGs) are graphs where nodes represent basic blocks and edges represent possible control flow paths between them. According to Allen~\cite{allen_1970}, basic blocks are straight-line sequences of instructions that have single entry and exit points, where no jumps are allowed inside the block, and jumps from outside the block into the middle are disallowed. The edges in a CFG set the constraint on how execution can flow between these blocks.
 
 The topology of CFGs is determined by program's control structure. Sequential statements produce linear chains of basic blocks, while additional control constructs such as conditionals, loops and function exits make the flow between nodes more complicated. For example, loops create edges that point back to earlier blocks in the graph.
 
