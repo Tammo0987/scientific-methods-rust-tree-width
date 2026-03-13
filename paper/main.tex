@@ -18,8 +18,17 @@
 \begin{document}
 
 \maketitle
-\tableofcontents
-\newpage
+
+\begin{abstract}
+	Treewidth is a graph-theoretic measure of structural complexity with direct applications in compiler optimisation.
+	Thorup~(1998) showed that the control-flow graphs~(CFGs) of goto-free C programs have treewidth at most~6, enabling efficient register allocation.
+	Gustedt, M{\ae}hle, and Telle~(2002) extended this result to label-free Java and confirmed it empirically on the Java standard library, finding an average treewidth of~2.7 and a maximum of~5.
+	In this paper, we perform an analogous empirical study for Rust.
+	Rather than analysing the source language, we operate on Rust's Mid-level Intermediate Representation~(MIR), the compiler's own explicit CFG-based representation at which flow-sensitive analyses such as borrow checking are performed.
+	We extract CFGs for all functions in the Rust standard library using a custom compiler driver and compute their treewidth with \texttt{FlowCutter}.
+	\todo[inline]{Add results sentence: mean, median, max treewidth; safe vs.\ unsafe split.}
+	We report results for all functions combined and separately for safe and unsafe Rust.
+\end{abstract}
 
 \input{chapters/introduction}
 \input{chapters/background}
@@ -30,5 +39,12 @@
 \input{chapters/conclusion}
 
 \printbibliography
+
+\newpage
+\section*{AI Statement}
+
+% Describe in detail how AI tools (e.g.\ ChatGPT, GitHub Copilot, or similar)
+% were used during the research and writing of this paper.
+% If no AI tools were used, a brief statement to that effect is sufficient.
 
 \end{document}
