@@ -4,20 +4,12 @@
 \subsection{Experimental Setup}
 \label{subsec:setup}
 
-% - Corpus: selected crates / parts of the Rust standard library
-% - Metrics collected
-% - Hardware / environment
-
 Using the pipeline from Section~\ref{sec:methodology}, we analysed the Rust standard library for the host target \texttt{aarch64-apple-darwin}. The corpus consists of the \texttt{core}, \texttt{alloc}, and \texttt{std} crates compiled with monomorphisation enabled, so each concrete instantiation of a generic function contributes its own MIR body and CFG. In total, the corpus contains 27{,}997 functions: 22{,}273 safe functions and 5{,}724 functions declared as \texttt{unsafe fn}.
 
-For each function, we computed the treewidth of its MIR CFG. We report the mean, median, and maximum treewidth, together with the share of functions with treewidth at most~3 and at most~6. The threshold of~6 is included to facilitate comparison with the bound established for goto-free C by Thorup~\cite{thorup_1998} and for label-free Java by Gustedt et al.~\cite{gustedt_2002}.
+For each function, we computed the treewidth of its MIR CFG. We report the mean, median, and maximum treewidth, together with the share of functions with treewidth at most~3 and at most~6. The threshold of~6 is included to facilitate comparison with the bound established for goto-free C and for label-free Java~\cite{thorup_1998,gustedt_2002}.
 
 \subsection{Results}
 \label{subsec:results}
-
-% - Treewidth distribution across functions
-% - Whether upper bounds of 4--6 hold in practice
-% - Comparison with Java results from Gustedt et al.
 
 Treewidth is very small across the corpus. Over all 27{,}997 functions, the mean treewidth is 1.04, the median is 1, and the maximum observed treewidth is 6. Moreover, 99.65\% of all functions have treewidth at most~3, and all functions have treewidth at most~6. Thus, MIR CFGs in the Rust standard library are overwhelmingly close to trees in practice.
 
@@ -44,12 +36,16 @@ The safe/unsafe split does not indicate higher structural complexity for unsafe 
 \subsection{Discussion}
 \label{subsec:discussion}
 
-% - Constructs that drive treewidth up
-% - Effect of unsafe Rust
-% - Threats to validity
+The results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result~\cite{thorup_1998}, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 associated with structured C and Java fragments, and the maximum observed value is exactly~6.
 
-The results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 known for structured C and Java fragments, and the maximum observed value is exactly~6.
+But the results also invite comparison with the Java study of Gustedt et al., which should be interpreted with care: their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs~\cite{gustedt_2002}.
+In particular, treewidth~0 and~1 are common in our setting but cannot occur in their construction.
+With this in mind, they report an average treewidth of about~2.7 and a maximum of~5 for the Java standard library, whereas we obtain a mean of~1.04 and a maximum of~6 for Rust MIR.
 
-Compared to the Java study of Gustedt et al.~\cite{gustedt_2002}, our treewidths are lower on average but similar at the high end. They report an average treewidth of about~2.7 and a maximum of~5 for the Java standard library, whereas we obtain a mean of~1.04 and a maximum of~6 for Rust MIR. This difference should be interpreted with care, since their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs. In particular, treewidth~0 and~1 are common in our setting but cannot occur in their construction.
+Three further threats to validity remain.
+First, the study is limited to the Rust standard library and may not represent application code or third-party crates.
+Second, the analysis is performed on optimised MIR for a single compiler version and host target, so the exact CFGs may vary across releases and platforms.
+Third, we analyse undirected CFGs after removing unwind-only cleanup edges, which matches the graph-theoretic notion of treewidth but abstracts away some aspects of Rust's exceptional control flow.
 
-There are several threats to validity. First, the study is limited to the Rust standard library and may not represent application code or third-party crates. Second, the analysis is performed on optimised MIR for a single compiler version and host target, so the exact CFGs may vary across releases and platforms. Third, we analyse undirected CFGs after removing unwind-only cleanup edges, which matches the graph-theoretic notion of treewidth but abstracts away some aspects of Rust's exceptional control flow.
+Despite these limitations, the results provide a consistent empirical baseline for the structural complexity of Rust MIR CFGs.
+The consistently small treewidth values suggest that compiler optimisations designed for graphs of bounded treewidth are well-suited to real Rust MIR in practice.
