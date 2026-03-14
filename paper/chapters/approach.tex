@@ -33,7 +33,7 @@ The result is serialised as a JSONL record per function for downstream analysis.
 \label{subsec:treewidth-computation}
 
 Treewidth is computed from the serialised CFGs using \texttt{FlowCutter}~\cite{strasser_2017}.
-Across the standard library, this covers all 29,693 functions, processed in parallel with one solver per CPU core.
+Across the standard library, this covers all 27,997 functions, processed in parallel with one solver per CPU core.
 The computation is fully deterministic, ensuring that repeated runs on the same input produce identical results.
 
 For each of the three groups (all functions, safe functions, and unsafe functions) we report the mean, median, and maximum treewidth, as well as the percentage of functions with treewidth at most 3 and at most 6.
