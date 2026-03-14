@@ -8,7 +8,22 @@
 % - Answer to the research question
 % - Limitations
 
+This paper studied the treewidth of control-flow graphs derived from Rust's Mid-level Intermediate Representation (MIR). Using a corpus consisting of the \texttt{core}, \texttt{alloc}, and \texttt{std} crates, we computed the treewidth of 27{,}997 monomorphised MIR CFGs.
+
+The results show that treewidth is very small in practice. Across the full corpus, the mean treewidth is 1.04, the median is 1, and the maximum observed value is 6. Moreover, 99.65\% of all functions have treewidth at most~3, and all functions in the corpus have treewidth at most~6. Unsafe functions do not exhibit larger treewidth than safe functions in this dataset.
+
+These findings provide strong empirical evidence that practical Rust MIR CFGs are usually structurally simple and are, in almost all cases, close to trees. At the same time, the study is limited to the Rust standard library, a single compiler configuration, and MIR-level CFGs, so the results should be interpreted within that scope.
+
+
 \subsection{Future Work}
 \label{subsec:future-work}
 
 % - Open problems or directions for further work
+
+Several directions remain open. First, it would be valuable to extend the analysis beyond the Rust standard library to third-party crates and application code, in order to assess how broadly the observed low treewidth phenomenon generalises.
+
+Second, a more direct comparison with the Java results of Gustedt et al.~\cite{gustedt_2002} would likely require analysis at a higher level of abstraction than MIR. In particular, Rust's High-level Intermediate Representation (HIR) remains closer to source structure and may therefore provide a better basis for comparison with source-oriented studies.
+
+Third, beyond changing the representation from MIR to HIR, future work could investigate whether a structural decomposition method closer to the one used in the Java paper can be adapted to Rust. This would help distinguish how much of the observed difference is due to genuine language-level structure and how much is due to differences in graph construction and abstraction level.
+
+Finally, an important theoretical direction is to determine whether Rust admits nontrivial structural treewidth bounds analogous to those known for restricted classes of C and Java programs.
