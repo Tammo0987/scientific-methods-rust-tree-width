@@ -1,95 +1,53 @@
 \section{Rust and MIR}
 \label{sec:rust-and-mir}
 
-\subsection{Rust in a Nutshell}
-\label{subsec:rust-in-a-nutshell}
-Rust is a systems programming language designed to combine low-level control over memory with strong compile-time safety guarantees. In contrast to languages such as Java, Rust does not rely on a garbage collector to reclaim memory at runtime. Instead, Rust uses a static discipline based on \emph{ownership}, \emph{borrowing}, and \emph{lifetimes} to ensure memory safety and data-race freedom at compile time. We will shortly explain what these concepts entail and why they are relevant. For further reading on this topic, we recommend reading the relevant chapters of the Rust Book \cite{rust_book_borrowing,rust_book_ownership,rust_book_lifetimes,rust_by_example_borrowing,rust_by_example_lifetimes}.
+\subsection{Overview}
+\label{subsec:rust-overview}
 
-\paragraph{How Rust differs from Java.}
-Java manages memory automatically through garbage collection. Objects are typically allocated on the heap and can be referenced by multiple aliases at the same time. The programmer does not explicitly control when memory is freed; instead, this is handled by the runtime. This design makes programming convenient, but it comes with runtime overhead and leaves certain correctness issues, such as race conditions or misuse of mutable shared state, to be handled through additional language mechanisms.
+This section briefly situates Rust relative to Java~\cite{gustedt_2002}, describes the features of Rust relevant to treewidth, and introduces MIR, the compiler's internal CFG representation on which our measurements are based.
+Rust is a systems programming language designed to combine low-level control over memory with strong compile-time safety guarantees.
+Unlike Java, Rust does not rely on a garbage collector; instead, memory safety is enforced statically at compile time by the \emph{borrow checker}~\cite{rust_book_borrowing}.
 
-Rust takes a different approach. Memory is still automatically managed from the programmer's perspective, but this management is performed statically by the compiler rather than dynamically by a garbage collector. The central idea is that every value in Rust has a unique \emph{owner}. When the owner goes out of scope, the value is automatically deallocated. This makes deallocation predictable and avoids the runtime cost of garbage collection.
+\subsection{Ownership and Borrowing}
+\label{subsec:ownership-borrowing}
 
-\paragraph{Ownership.}
-Ownership is Rust's fundamental memory management principle. Each value has exactly one owner at a time. Ownership can be transferred, for example by assignment or by passing a value to a function. After such a transfer, the original variable may no longer be used. This prevents multiple independent variables from believing that they are responsible for the same piece of memory.
+Every value in Rust has a unique \emph{owner}~\cite{rust_book_ownership}.
+Ownership can be transferred by assignment or by passing a value to a function.
+After such a transfer, the original variable may no longer be used, and when the owner goes out of scope, the value is automatically deallocated.
+This prevents multiple independent variables from being responsible for the same piece of memory.
 
-\noindent A simplified example is:
-\begin{minted}{rust}
-let v = Vec::new();
-let w = v;   // ownership moves from v to w
-// v can no longer be used here
-\end{minted}
-
-The key point is that ownership is not merely a runtime concept; it is part of the language's static semantics and is checked by the compiler.
-
-\paragraph{Borrowing.}
-In practice, programs often need temporary access to a value without taking ownership of it. Rust supports this through \emph{borrowing}. A borrow is a reference to a value owned elsewhere. There are two main kinds of borrows:
-\begin{itemize}
-	\item \emph{Shared borrows} (\texttt{\&T}), which allow read-only access.
-	\item \emph{Mutable borrows} (\texttt{\&mut T}), which allow modification.
-\end{itemize}
-
-Rust enforces strict aliasing rules:
-\begin{itemize}
-	\item any number of shared borrows may coexist, or
-	\item exactly one mutable borrow may exist,
-\end{itemize}
-but not both at the same time.
-
-This rule is the basis for Rust's guarantee that safe code is free of data races and certain classes of memory errors. In particular, if a mutable reference exists, the compiler ensures that no competing access can invalidate it.
-
-\paragraph{Lifetimes.}
-A borrow is only valid for some region of the program. This region is called its \emph{lifetime}. Lifetimes are usually inferred automatically by the compiler. The important point is that references may not outlive the values they refer to. Thus, Rust prevents dangling pointers statically.
-
-For example, the compiler rejects code in which a reference to a local variable escapes the variable's scope. In this sense, lifetimes describe when a borrow begins and when it must end.
-
-\paragraph{Control flow and flow-sensitive checking.}
-A crucial feature of Rust, and one that is especially relevant for this project, is that ownership and borrowing are \emph{flow-sensitive}. Whether a borrow is active can depend on the control-flow path taken through the program. For example, a mutable reference may be created only in one branch of an \texttt{if}-statement, or dropped in one branch but kept in another. Consequently, the compiler must reason about borrowing at specific program points rather than treating it as a purely syntactic property of the source code.
-
-This is one of the main differences from a language such as Java. In Java, references are ordinary aliases, and the language does not impose a static uniqueness discipline on mutable access. In Rust, by contrast, the legality of an operation can depend on whether another reference is still active at that point in the control flow.
-
-\paragraph{The borrow checker.}
-The component of the Rust compiler that enforces these ownership and borrowing rules is commonly called the \emph{borrow checker}. Its task is to verify, at compile time, that all uses of references satisfy Rust's aliasing and lifetime constraints. As a result, many errors that would otherwise manifest at runtime---such as use-after-free, dangling references, or unsynchronised mutable aliasing---are ruled out before the program is executed.
-
-\paragraph{Why this matters for our analysis.}
-For this project, the important observation is that Rust programs are not characterised solely by their ordinary control flow. In addition, they carry flow-sensitive ownership constraints that describe where borrows are introduced, where they remain active, and where they end. This makes Rust particularly interesting from a structural point of view: compared with languages such as Java, reasoning about Rust may require taking into account not only the control-flow graph of a program, but also ownership dependencies induced by the borrow checker.
+Programs often need temporary access to a value without transferring ownership.
+Rust supports this through \emph{borrowing}~\cite{rust_book_borrowing}: a borrow is a reference to a value owned elsewhere.
+There are two kinds: \emph{shared borrows} (\texttt{\&T}), which allow read-only access, and \emph{mutable borrows} (\texttt{\&mut T}), which allow modification.
+Rust enforces strict aliasing rules: any number of shared borrows may coexist, or exactly one mutable borrow may exist, but not both at the same time.
+A borrow is only valid for some region of the program, called its \emph{lifetime}~\cite{rust_book_lifetimes}.
+References may not outlive the values they refer to, preventing dangling pointers statically.
+Together, these aliasing and lifetime constraints are part of Rust's static semantics, enforced at compile time by the borrow checker.
+These checks are \emph{flow-sensitive}: whether a borrow is active depends on the control-flow path taken through the program.
+The borrow checker therefore operates directly on the CFG, and ownership constraints can influence its structure: values that go out of scope on some paths but not others require explicit drop edges in the compiled control-flow graph.
 
 \subsection{Rust Control Flow}
 \label{subsec:rust-control-flow}
 
-% - Rust's structured control flow (no unrestricted goto)
-% - Relevant constructs: loops, break/continue with labels, closures, async
-% - Comparison with goto-free C and label-free Java subsets
+The structure of Rust's control flow is the other main factor shaping CFG complexity.
+Rust uses predominantly \emph{structured} control flow: execution is expressed through conditional expressions, pattern matching, and loops rather than arbitrary jumps~\cite{rust_loop_exprs}.
+This is one of the main reasons CFGs of real programs tend to remain relatively simple, as prior work on goto-free language fragments has shown~\cite{thorup_1998}.
 
-Rust uses predominantly \emph{structured} control flow. At the source level, ordinary program execution is expressed through constructs such as conditional expressions, pattern matching, and loops, rather than through unrestricted jumps. In particular, Rust provides \texttt{if}-expressions, \texttt{match}-expressions, and several loop forms, including \texttt{loop}, \texttt{while}, and \texttt{for}. The language also supports \texttt{break} and \texttt{continue}, and these may be directed to an enclosing labeled loop, but they remain confined to structured looping constructs rather than providing a general \texttt{goto}-style jump mechanism.
-
-% https://doc.rust-lang.org/reference/expressions/loop-expr.html
-
-This is important for our purposes because structured control flow is one of the main reasons why the control-flow graphs of many real programs tend to remain relatively simple. Prior work on bounded treewidth for goto-free or label-free language fragments exploits exactly this phenomenon: if the language restricts arbitrary jumps, then the resulting control flow is largely determined by nesting and sequencing of structured constructs. Rust appears similar in this respect, since its ordinary source-level control flow is likewise organised around structured constructs rather than unrestricted transfer of control.
-
-There are, however, several Rust features that make the overall picture richer than in a basic structured language fragment. First, labeled \texttt{break} and \texttt{continue} allow control to target an outer loop, which introduces non-local but still structured exits. Second, closures may capture values from their surrounding environment, which means that local control-flow reasoning may interact with ownership and borrowing of captured state. Third, asynchronous Rust introduces \texttt{async} functions, blocks, and closures, which are compiled into \texttt{Future}-producing state machines rather than executing immediately in direct style. These features do not turn Rust into an unstructured language, but they do mean that the eventual compiler representation may contain control-flow patterns that are less direct than the source code initially suggests.
-
-% https://doc.rust-lang.org/book/ch13-01-closures.html
-
-For the present project, the key observation is therefore the following: Rust source programs are written using structured control-flow constructs, but the language also combines these constructs with flow-sensitive ownership and borrowing rules. As a result, any structural analysis of Rust must take seriously both the ordinary shape of control flow and the additional constraints introduced by the ownership discipline.
+Certain language features can make the compiled control-flow graph more complex than the source structure suggests.
+Labeled \texttt{break} and \texttt{continue} can jump to an enclosing loop, creating edges in the CFG that bypass intermediate blocks.
+Gustedt et al.\ showed that such constructs are similarly harmful to \texttt{goto} and can lead to arbitrarily high treewidth~\cite{gustedt_2002}.
+Similarly, async functions compile to state machines whose branches and cycles are not visible at the source level.
+This motivates measuring treewidth empirically on the compiler's internal representation (see Section~\ref{subsec:mir}) rather than reasoning from source-level nesting alone.
 
 \subsection{Mid-level Intermediate Representation}
 \label{subsec:mir}
 
-% - What MIR is and where it sits in the compiler pipeline
-% - Basic blocks and explicit control-flow edges in MIR
-% - Why MIR is a suitable CFG representation for this analysis
+The Rust compiler lowers functions into the \emph{Mid-level Intermediate Representation} (MIR) after parsing and earlier compilation stages~\cite{rust_mir_guide}.
+MIR is a control-flow graph: it consists of basic blocks containing simple typed statements, together with explicit control-flow transfers between those blocks.
+A basic block is a sequence of statements followed by a \emph{terminator}.
+Terminators represent control transfers with potentially multiple successors, covering branching, function calls, drops, and returns.
+Once lowered to MIR, execution order is no longer implicit in source nesting but is represented explicitly as a graph.
 
-The Rust compiler does not analyse most properties directly on the surface syntax of the language. Instead, after parsing and earlier compilation stages, it lowers functions into an internal representation called the \emph{Mid-level Intermediate Representation} (MIR). In the compiler documentation, MIR is explicitly described as being essentially a control-flow graph: it consists of basic blocks containing simple typed statements, together with explicit control-flow transfers between those blocks.
-
-% https://rustc-dev-guide.rust-lang.org/overview.html
-
-A basic block in MIR is a sequence of statements that execute in order, followed by a \emph{terminator}. Statements represent operations with a single successor, whereas terminators represent control transfers and may have multiple successors. This includes, for example, branching, function calls, drops, and returns. Consequently, once a function has been lowered to MIR, its execution order is no longer implicit in nested source syntax; instead, it is represented explicitly as a graph whose nodes are basic blocks and whose edges correspond to possible transfers of control.
-
-% https://rustc-dev-guide.rust-lang.org/mir/index.html
-
-This makes MIR particularly suitable as the basis for our analysis. First, it provides exactly the kind of CFG representation needed for graph-theoretic reasoning, such as treewidth analysis. Second, MIR is also the level at which the compiler performs several flow-sensitive analyses. The compiler development guide notes, for example, that dataflow effects are associated with MIR statements, terminators, and even outgoing edges of terminators. Similarly, region inference and borrow checking are phrased in terms of locations in the MIR control-flow graph, where a location is identified by a basic block together with a position inside that block.
-
-%https://rustc-dev-guide.rust-lang.org/mir/dataflow.html
-
-For this reason, MIR is not merely a convenient approximation of control flow; it is the compiler's own explicit representation of control flow at the stage where ownership- and lifetime-related analyses are carried out. If we want to compare Rust with prior treewidth analyses of structured languages, then MIR provides the appropriate CFG-like object on which such a comparison can be based.
+MIR provides a direct basis for studying the structure of real Rust programs.
+It offers a CFG representation suitable for treewidth analysis, and coincides with the level at which the compiler performs its own flow-sensitive analyses~\cite{rust_mir_guide}.
+We therefore extract and analyse CFGs at the MIR level, where the compiler's own structural reasoning takes place.
