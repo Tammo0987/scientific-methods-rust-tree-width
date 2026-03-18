@@ -20,14 +20,17 @@
 \maketitle
 
 \begin{abstract}
-	Treewidth is a graph-theoretic measure of structural complexity with direct applications in compiler optimisation.
+	Treewidth is a measurement how close a Graph is to being a tree.
+	It has direct applications in compiler optmization.
 	Thorup~(1998) showed that the control-flow graphs~(CFGs) of goto-free C programs have treewidth at most~6, enabling efficient register allocation.
 	Gustedt, M{\ae}hle, and Telle~(2002) extended this result to label-free Java and confirmed it empirically on the Java standard library, finding an average treewidth of~2.7 and a maximum of~5.
 	In this paper, we perform an analogous empirical study for Rust.
 	Rather than analysing the source language, we operate on Rust's Mid-level Intermediate Representation~(MIR), the compiler's own explicit CFG-based representation at which flow-sensitive analyses such as borrow checking are performed.
 	We extract CFGs for all functions in the Rust standard library using a custom compiler driver and compute their treewidth with \texttt{FlowCutter}.
-	\todo[inline]{Add results sentence: mean, median, max treewidth; safe vs.\ unsafe split.}
-	We report results for all functions combined and separately for safe and unsafe Rust.
+	Across 27,997 functions from the standard library, the mean treewidth is~1.04, the median is~1, and the maximum observed value is~6.
+	99.65\% of all functions have treewidth at most~3.
+	We report results for all functions combined and separately for safe and unsafe Rust, finding that unsafe functions do not exhibit higher structural complexity than safe ones.
+	These findings suggest that treewidth-based compiler optimisations are practically applicable to real Rust programs.
 \end{abstract}
 
 \input{chapters/introduction}
@@ -47,7 +50,7 @@ AI tools were used at several stages of this project, as described below.
 
 \paragraph{Literature discovery.}
 AI assistants were used to support the literature search, particularly when relevant terminology was not known in advance.
-Suggested papers and authors were followed up and verified independently using standard academic search tools.
+Suggested papers and authors were followed up and verified independently using standard academic search tools. Furthermore, it was used to come up with keywords to search for papers in search engines such as Google Scholar.
 
 \paragraph{Writing and structuring.}
 AI tools were used as part of an iterative writing process.
@@ -59,10 +62,10 @@ AI tools were used to check for grammatical errors, inconsistent terminology, an
 
 \paragraph{Code generation.}
 The implementation tooling for this project was produced through an iterative, AI-assisted process.
-This was a two-directional process: AI tools proposed implementations that were reviewed and corrected by the authors, and authors proposed code that was reviewed by AI tools and subsequently revised by the authors.
+This was a two-directional process: AI tools proposed implementations that were reviewed and corrected by the authors, and authors proposed code that was reviewed by AI tools and subsequently revised by the authors. Just like for writing and structuring, in all cases suggestions were critically reviewed, revised, or rejected.
 
 \paragraph{Tools and models.}
-The primary AI tool used was Claude by Anthropic, accessed through the official interface and local tooling such as the Claude Code CLI and editor integrations.
+The primary AI tool used were Claude by Anthropic and ChatGPT by OpenAI, accessed through the official interface and local tooling such as the Claude Code CLI and editor integrations.
 \todo[inline]{Verify and extend with tools used by other group members.}
 
 \end{document}
