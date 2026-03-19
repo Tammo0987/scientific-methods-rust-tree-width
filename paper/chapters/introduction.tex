@@ -1,7 +1,23 @@
 \section{Introduction}
 \label{sec:introduction}
 
-This is some test.
+Control-flow graphs (CFGs) are a fundamental abstraction used by compilers to represent the execution structure of programs. Many optimisation and analysis tasks in compilers operate directly on these graphs. A key structural property of graphs is treewidth, a parameter that measures how close a graph is to a tree. The treewidth is obtained by the tree decomposition, which is a mapping of a graph into a tree, where the vertices are a set of nodes from the original graph. The treewidth is the size of the largest vertice (or bag) minus one. Many NP-hard problems can algorithmically be solved in linear time when the graph has a smaller treewidth. This observation makes the treewidth of CFGs an important question for compiler design.
+
+Register allocation is an example of an optimisation problem in compilers, which can be represented as a graph problem, where the complexity depends on the structure of the underlying program representation. If the CFG of the program has a bounded treewidth, dynamic-programming can be used to compute the optimal allocations efficiently. Understanding the structural complexity of real program CFGs therefore has direct implications for the feasibility of exact optimisation techniques in compilers.
+
+The connection between structured programs (goto-free) and bounded treewidth was shown by Thorup, it was shown that the CFGs of structured programs have a bounded treewidth. In particular, he proved that CFGs of goto-free C programs have a treewidth of at most six. This finding implies that the structural complexity of control flow is limited by structured programming structures. Building on this observation, Gustedt investigated whether the same behaviour happens in practice for Java programs. It was shown that label-free Java has a bound of at most six and confirmed that real Java methods exhibit small treewidth values, with an average of 2.7 and a maximum of five in the Java standard library.
+
+Based on these result, we raise a similar question for modern programming languages: what is the treewidth of Rust programs? Rather than analysing source-level control flow, we operate on MIR....
+
+% - Write more on MIR and our research...
+% - Our contributions: (1) theoretical, (2) tool/emperical...
+
+This paper is organised as follows: In section 2, we introduce the necessary preliminaries and background concepts, namely Control-Flow graphs (CFGs) and treewidth, where we formally defined the tree decomposition. Section 3 reviews the related work on the treewidth, … add references … Section 4 provides background on Rust and its Mid-level Intermediate Representation (MIR). Followed by section 5, which describes the methodology for extracting CFGs and computing the treewidth. Section 6 presents the results of our analysis. Finally, in section 7 we summarize the results and outline directions for future work.
+
+
+
+
+
 % - Motivation: why treewidth of programs matters
 % - Connection to register allocation and compiler optimisation
 % - Thorup's result for goto-free C; Gustedt et al. for Java
