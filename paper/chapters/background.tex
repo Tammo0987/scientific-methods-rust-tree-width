@@ -4,9 +4,11 @@
 \subsection{Control-Flow Graphs}
 \label{subsec:cfg}
 
-Control-flow graphs (CFGs) are graphs where nodes represent basic blocks and edges represent possible control flow paths between them~\cite{thorup_1998}.
-A basic block, which forms the fundamental unit of a CFG, is a straight-line sequence of instructions that has a single entry and a single exit point, where no jumps are allowed inside the block, and jumps from outside the block into the middle are disallowed.
-The edges in a CFG set the constraint on how execution can flow between these blocks~\cite{allen_1970}.
+A compiler represents the execution structure of a program as a \emph{control-flow graph} (CFG).
+
+\begin{definition}[Control-Flow Graph]
+A \emph{control-flow graph} is a directed graph $G = (V, E)$ where each node $v \in V$ is a \emph{basic block}, a straight-line sequence of instructions with a single entry and a single exit point, and each edge $(u, v) \in E$ represents a possible transfer of control from block $u$ to block $v$~\cite{allen_1970}.
+\end{definition}
 
 The topology of CFGs is determined by a program's control structure.
 Sequential statements produce linear chains of basic blocks, while additional control constructs such as conditionals, loops and function exits make the flow between nodes more complicated.
@@ -15,31 +17,30 @@ For example, loops create edges that point back to earlier blocks in the graph~\
 \subsection{Treewidth}
 \label{subsec:treewidth}
 
-To study the structural complexity of programs, CFGs can be analysed using the concept of treewidth.
-Treewidth is an integer which measures how tree-like a graph is, and it can be computed for any graph~\cite{bodlaender_1993}.
-This is useful because many computational problems that are NP-hard on general graphs can be solved more efficiently on graphs that are more tree-like.
-A treewidth of 1 corresponds to a tree.
-As the treewidth increases, the graph becomes less tree-like, and thus structurally more complex.
+Treewidth is a graph parameter that measures how tree-like a graph is~\cite{bodlaender_1993}.
+Many computational problems that are NP-hard on general graphs can be solved efficiently on graphs with small treewidth, by applying dynamic programming on a tree decomposition of the graph~\cite{bodlaender_1988}.
+We first define tree decompositions, then treewidth in terms of them.
 
-\paragraph{Tree decomposition}
-To compute the treewidth of a graph, a \emph{tree decomposition} of the graph must first be constructed.
-This involves representing the original graph $G = (V, E)$ as a tree $T$, in which each node is a subset of vertices of $G$, called a \emph{bag}.
-The family of bags is $X = \{X_1, \ldots, X_n\}$.
-A tree decomposition is a pair $(X, T)$.
-The constraints for a valid tree decomposition are the following:
-
+\begin{definition}[Tree Decomposition]
+A \emph{tree decomposition} of a graph $G = (V, E)$ is a pair $(X, T)$, where $T$ is a tree and $X = \{X_1, \ldots, X_n\}$ is a family of subsets of $V$ (called \emph{bags}), one per node of $T$, satisfying:
 \begin{itemize}
-	\item Every node in $G$ must appear in at least one bag: $\bigcup_{i} X_i = V$.
+	\item $\bigcup_{i} X_i = V$: every vertex of $G$ appears in at least one bag.
 	\item For every edge $(x, y) \in E$, there exists a bag $X_i$ such that $x \in X_i$ and $y \in X_i$.
-	\item For every node $v \in V$, the set of bags $\{X_i \mid v \in X_i\}$ forms a connected subtree of $T$.
+	\item For every vertex $v \in V$, the set of bags $\{X_i \mid v \in X_i\}$ forms a connected subtree of $T$.
 \end{itemize}
-The width of a decomposition is the size of its largest bag minus one.
-The \emph{treewidth} of $G$ is the minimum width over all valid decompositions~\cite{robertson_1986}.
+The \emph{width} of a tree decomposition is $\max_i |X_i| - 1$~\cite{robertson_1986}.
+\end{definition}
+
+\begin{definition}[Treewidth]
+The \emph{treewidth} of a graph $G$, denoted $\mathrm{tw}(G)$, is the minimum width over all valid tree decompositions of $G$~\cite{robertson_1986}.
+\end{definition}
+
+A treewidth of~1 corresponds to a tree.
+As treewidth increases, the graph becomes less tree-like and structurally more complex.
 
 \paragraph{Relevance \& CFG connection}
-Graphs with bounded treewidth, i.e.\ graphs whose treewidth does not exceed a fixed constant, allow many hard computational problems to be solved efficiently~\cite{thorup_1998}.
-This is possible by applying dynamic programming on the tree decomposition, solving subproblems in each bag and combining solutions along the tree.
-The runtime of such algorithms depends exponentially on the treewidth, but only polynomially on the number of nodes, making them feasible for graphs with small treewidth~\cite{bodlaender_1988}.
+Graphs with bounded treewidth allow many hard computational problems to be solved efficiently~\cite{thorup_1998}.
+The runtime of such algorithms depends exponentially on the treewidth, but only polynomially on the number of vertices, making them feasible for graphs with small treewidth~\cite{bodlaender_1988}.
 
 In the context of programs, CFGs serve as input graphs for treewidth analysis.
 Analysing the treewidth of a CFG provides a way to quantify the program's structural complexity.
