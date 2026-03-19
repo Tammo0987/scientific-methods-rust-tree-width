@@ -3,21 +3,24 @@
 
 \subsection{Treewidth of Structured Programs}
 \label{subsec:rw-treewidth-structured}
-In earlier work, Thorup~\cite{thorup_1998} analyses the treewidth of CFGs from different structured programs and shows that those graphs have bounded treewidths. The main idea of his research is that structured programs have no \texttt{goto} jumps, which restricts the control flow and therefore limits the complexity of their CFGs. In particular, Theorem 1 shows that goto-free Algol and Pascal programs have a treewidth of $\leq3$, all Modula-2 programs have a treewidth of $\leq5$ and goto-free C programs have a treewidth of $\leq6$, assuming all languages have \texttt{short-circuit evaluation}.
+In earlier work, Thorup analyses the treewidth of CFGs of structured programs and shows that they have bounded treewidth.
+The main idea of his research is that structured programs have no \texttt{goto} jumps, which restricts the control flow and therefore limits the complexity of their CFGs.
+In particular, Thorup shows that goto-free Algol and Pascal programs have a treewidth of $\leq3$, all Modula-2 programs have a treewidth of $\leq5$ and goto-free C programs have a treewidth of $\leq6$, assuming all languages have \texttt{short-circuit evaluation}~\cite{thorup_1998}.
 
-Thorup’s approach to calculating these treewidths is based on k-complex listings of program statements and a corresponding ordering of CFG nodes. This ensures that each node has a listing of separators of size at most $k$ consisting of the node's neighbors. Then, by visiting the statements in the structured programs, and computing their separators, the resulting CFG can be shown to have bounded treewidth.
+Thorup's proof is constructive: it is based on k-complex listings of program statements and a corresponding ordering of CFG nodes.
+This ensures that each node has a separator of size at most $k$ consisting of its neighbors.
+By visiting the statements of a structured program and computing their separators, the resulting CFG can be shown to have bounded treewidth.
 
-In the case of goto-free C programs, the higher bound of 6 arises from the presence of \texttt{continue} statements in loops, which expand the separator listings of neighbors. Whereas, Modula-2 programs do not have \texttt{continue} statements, and therefore have a treewidth of $\leq5$.
+In the case of goto-free C programs, the higher bound of 6 arises from the presence of \texttt{continue} statements in loops, which expand the separator listings of neighbors.
+Modula-2 programs, by contrast, do not have \texttt{continue} statements, and therefore have a treewidth of $\leq5$.
 
-Thorup's results provide a theoretical basis on analysing structured programs, showing they have bounded treewidths. This is relevant for our work, as it establishes how language specific control-flow constructs influence CFG complexity, motivating the study of bounded treewidth in modern programming languages, such as Rust.
-
-% - Thorup (1998): treewidth \leq 6 for goto-free C; linear-time register allocation
-% - Bodlaender, Gustedt, Telle (1998): linear-time register allocation for fixed number of registers
+Thorup's results provide a theoretical basis for analysing structured programs, showing they have bounded treewidth.
+This is relevant for our work, as it establishes how language-specific control-flow constructs influence CFG complexity, motivating the study of bounded treewidth in modern programming languages, such as Rust.
 
 \subsection{Treewidth of Java Programs}
 \label{subsec:rw-java}
 
-Building on Thorup's theoretical results for structured programs~\cite{thorup_1998}, Gustedt, M{\ae}hle, and Telle~\cite{gustedt_2002} investigate whether the same treewidth bounds apply to Java.
+Building on Thorup's theoretical results for structured programs~\cite{thorup_1998}, Gustedt, M{\ae}hle, and Telle investigate whether the same treewidth bounds apply to Java~\cite{gustedt_2002}.
 Thorup showed that \texttt{goto}-free C programs have CFG treewidth at most~6, using the notion of \emph{flow-affecting constructs} (FACs): language constructs that add non-local control-flow edges and increase treewidth by at most~1 each.
 
 Although Java has no \texttt{goto} statement, its labeled \texttt{break} and \texttt{continue} statements are expressively equivalent to \texttt{goto}.
@@ -32,15 +35,9 @@ This paper is directly relevant to our work: it establishes both a theoretical t
 \subsection{MIR-Based Program Analysis}
 \label{subsec:rw-rust-analysis}
 
-Our analysis of Rust programs operates on MIR, Rust's compiler-internal
-control-flow graph representation (see Section~\ref{subsec:mir}), extracted via
-a custom \texttt{rustc} compiler driver.
+Our analysis of Rust programs operates on MIR, Rust's compiler-internal control-flow graph representation (see Section~\ref{subsec:mir}), extracted via a custom \texttt{rustc} compiler driver.
 Several prior tools follow the same approach.
 
-Budde implements a data-flow vulnerability analysis of Rust code operating on
-MIR via a custom compiler driver~\cite{budde_2024}.
-The Prusti project encodes MIR-level program semantics for formal
-verification~\cite{astrauskas_2022}.
-This establishes the custom compiler driver approach as an appropriate and
-proven entry point for program analysis in Rust, and our work follows the same
-approach, applying it to the study of CFG treewidth.
+Budde implements a data-flow vulnerability analysis of Rust code operating on MIR via a custom compiler driver~\cite{budde_2024}.
+The Prusti project encodes MIR-level program semantics for formal verification~\cite{astrauskas_2022}.
+This establishes the custom compiler driver approach as an appropriate and proven entry point for program analysis in Rust, and our work follows the same approach, applying it to the study of CFG treewidth.
