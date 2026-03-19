@@ -4,39 +4,46 @@
 \subsection{Control-Flow Graphs}
 \label{subsec:cfg}
 
-Control-flow graphs (CFGs) are graphs where nodes represent basic blocks and edges represent possible control flow paths between them.~\cite{thorup_1998} A basic block, which forms the fundamental unit of a CFG, is a straight-line sequences of instructions that have single entry and exit points, where no jumps are allowed inside the block, and jumps from outside the block into the middle are disallowed. The edges in a CFG set the constraint on how execution can flow between these blocks.~\cite{allen_1970}
+Control-flow graphs (CFGs) are graphs where nodes represent basic blocks and edges represent possible control flow paths between them~\cite{thorup_1998}.
+A basic block, which forms the fundamental unit of a CFG, is a straight-line sequence of instructions that has a single entry and a single exit point, where no jumps are allowed inside the block, and jumps from outside the block into the middle are disallowed.
+The edges in a CFG set the constraint on how execution can flow between these blocks~\cite{allen_1970}.
 
-The topology of CFGs is determined by a program's control structure. Sequential statements produce linear chains of basic blocks, while additional control constructs such as conditionals, loops and function exits make the flow between nodes more complicated. For example, loops creates edges that point back to earlier blocks in the graph.~\cite[Ch~7]{muchnick1997advanced}
-
-% - Definition: nodes = basic blocks, edges = control transfers
-% - Relationship between program structure and CFG topology
-% - CFG treewidth as a proxy for program complexity
+The topology of CFGs is determined by a program's control structure.
+Sequential statements produce linear chains of basic blocks, while additional control constructs such as conditionals, loops and function exits make the flow between nodes more complicated.
+For example, loops create edges that point back to earlier blocks in the graph~\cite[Ch.~7]{muchnick_1997}.
 
 \subsection{Treewidth}
 \label{subsec:treewidth}
-To study the structural complexity of programs, CFGs can be analysed using the concept of treewidth. Treewidth is an integer, which measures how "tree-like" a graph is, and it can be computed for any graph.~\cite{bodlaenderTouristGuideTreewidth} This is useful because many computational problems that are NP-hard on general graphs can be solved more efficiently on graphs that are more tree-like. A treewidth of 1 corresponds to a tree. As the treewidth increases, the graph becomes less tree-like, and thus structurally more complex.
+
+To study the structural complexity of programs, CFGs can be analysed using the concept of treewidth.
+Treewidth is an integer which measures how tree-like a graph is, and it can be computed for any graph~\cite{bodlaender_1993}.
+This is useful because many computational problems that are NP-hard on general graphs can be solved more efficiently on graphs that are more tree-like.
+A treewidth of 1 corresponds to a tree.
+As the treewidth increases, the graph becomes less tree-like, and thus structurally more complex.
 
 \paragraph{Tree decomposition}
 To compute the treewidth of a graph, a \emph{tree decomposition} of the graph must first be constructed.
-
-This involves representing the original graph \texttt{G = (V,E)} as a tree \texttt{T}, in which a vertex is a subset of nodes (from the original graph $G$), called a ``bag''. The family of these vertex sets (or bags) are defined as $B$. A tree decomposition is a pair \texttt{(T, B)}.
-
-\noindent
+This involves representing the original graph $G = (V, E)$ as a tree $T$, in which each node is a subset of vertices of $G$, called a \emph{bag}.
+The family of bags is $X = \{X_1, \ldots, X_n\}$.
+A tree decomposition is a pair $(X, T)$.
 The constraints for a valid tree decomposition are the following:
-\begin{itemize}
-	\item Every node in \texttt{G} must appear in at least one bag, guaranteeing that all nodes are covered in \texttt{T}. This is the same as saying that the union of all bags is equal to all nodes in \texttt{G}: $\bigcup_{t \in T}B_t = V$
-	\item For every edge $(x, y)$, we must have that both nodes which are connected to each other, appear in at least one bag $b \in B$: $x \in b$ and $y \in b$
-	\item If a node $v$ appear in any 2 bags $B_i$ and $B_j$, all bags $B_k$ associated with the nodes in the unique path of $T$, which is between $B_i$ and $B_j$, must contain that same node $v$ as well. This is the same as saying that bags containing a vertex $v$ are able to form a connected subtree of $T$.
-\end{itemize}
 
-The treewidth of a graph is determined by its tree decomposition: it is the size of the largest bag minus one. Since a graph can have multiple valid tree decompositions, the \emph{treewidth} of the graph is the minimum width over all possible decompositions \cite{graphminors}.
+\begin{itemize}
+	\item Every node in $G$ must appear in at least one bag: $\bigcup_{i} X_i = V$.
+	\item For every edge $(x, y) \in E$, there exists a bag $X_i$ such that $x \in X_i$ and $y \in X_i$.
+	\item For every node $v \in V$, the set of bags $\{X_i \mid v \in X_i\}$ forms a connected subtree of $T$.
+\end{itemize}
+The width of a decomposition is the size of its largest bag minus one.
+The \emph{treewidth} of $G$ is the minimum width over all valid decompositions~\cite{robertson_1986}.
 
 \paragraph{Relevance \& CFG connection}
-Graphs with bounded treewidth, i.e. graphs whose treewidth does not exceed a fixed constant, allow many hard computational problems to be solved efficiently \cite{thorup_1998}. This is possible when a tree decomposition of a graph is constructed, where dynamic programming can be applied on the resulting tree structure.  Dynamic programming solves subproblems in each bag and combines solutions along the tree decomposition. The runtime of such algorithms depends exponentially on the treewidth, but only polynomially on the number of nodes, making them feasible for graphs with small treewidth \cite{bodlaenderDynamicProgrammingGraphs1988}.
+Graphs with bounded treewidth, i.e.\ graphs whose treewidth does not exceed a fixed constant, allow many hard computational problems to be solved efficiently~\cite{thorup_1998}.
+This is possible by applying dynamic programming on the tree decomposition, solving subproblems in each bag and combining solutions along the tree.
+The runtime of such algorithms depends exponentially on the treewidth, but only polynomially on the number of nodes, making them feasible for graphs with small treewidth~\cite{bodlaender_1988}.
 
-In the context of programs, CFGs serve as input graphs for treewidth analysis. Analysing the treewidth of a CFG provides a way to quantify the program's structural complexity. Programs with simpler, more structured control flow generally have lower treewidth, whereas programs with more complex control flow tend to have higher treewidth \cite{thorup_1998}.
+In the context of programs, CFGs serve as input graphs for treewidth analysis.
+Analysing the treewidth of a CFG provides a way to quantify the program's structural complexity.
+Programs with simpler, more structured control flow generally have lower treewidth, whereas programs with more complex control flow tend to have higher treewidth~\cite{thorup_1998}.
 
-The connection between control-flow structure and treewidth has been studied extensively in prior work. In the next section, we review theoretical and empirical results on the treewidth of structured programs and related programming languages.
-
-% - Definition of treewidth (tree decomposition)
-% - Relevance: bounded treewidth enables efficient dynamic programming
+The connection between control-flow structure and treewidth has been studied extensively in prior work.
+In the next section, we review theoretical and empirical results on the treewidth of structured programs and related programming languages.
