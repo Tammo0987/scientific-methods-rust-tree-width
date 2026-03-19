@@ -27,11 +27,20 @@ Restricting to a label-free subset eliminates this issue: label-free Java has ex
 To complement this theoretical bound, the authors implement a tool to compute tree decompositions of Java CFGs and apply it to 9387 methods from the Java standard library.
 The average treewidth is~2.7 and the maximum observed is~5, with over 95\% of methods having treewidth at most~3, well below the theoretical bound.
 
-This paper is directly relevant to our work: it establishes both a theoretical treewidth bound and empirical baselines for a real-world language, serving as the primary comparison point for our analogous analysis of Rust programs via MIR.
+This paper is directly relevant to our work: it establishes both a theoretical treewidth bound and empirical baselines for a real-world language, serving as the primary comparison point for our analogous analysis of Rust programs.
 
-\subsection{Static Analysis of Rust}
+\subsection{MIR-Based Program Analysis}
 \label{subsec:rw-rust-analysis}
 
-% - Prusti: formal verification via MIR
-% - Budde (2024): data-flow vulnerability analysis; CFG extraction tooling we may reuse
-% - Other MIR-based tools
+Our analysis of Rust programs operates on MIR, Rust's compiler-internal
+control-flow graph representation (see Section~\ref{subsec:mir}), extracted via
+a custom \texttt{rustc} compiler driver.
+Several prior tools follow the same approach.
+
+Budde implements a data-flow vulnerability analysis of Rust code operating on
+MIR via a custom compiler driver~\cite{budde_2024}.
+The Prusti project encodes MIR-level program semantics for formal
+verification~\cite{astrauskas_2022}.
+This establishes the custom compiler driver approach as an appropriate and
+proven entry point for program analysis in Rust, and our work follows the same
+approach, applying it to the study of CFG treewidth.
