@@ -36,13 +36,13 @@ The safe/unsafe split does not indicate higher structural complexity for unsafe 
 \subsection{Discussion}
 \label{subsec:discussion}
 
-The results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result~\cite{thorup_1998}, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 associated with structured C and Java fragments, and the maximum observed value is exactly~6.
+Overall the results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result~\cite{thorup_1998}, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 associated with structured C and Java fragments, and the maximum observed value is exactly~6.
 
-But the results also invite comparison with the Java study of Gustedt et al., which should be interpreted with care: their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs~\cite{gustedt_2002}.
+For further context, the results invite comparison with the Java study of Gustedt et al., which should be interpreted with care: their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs~\cite{gustedt_2002}.
 In particular, treewidth~0 and~1 are common in our setting but cannot occur in their construction.
 With this in mind, they report an average treewidth of about~2.7 and a maximum of~5 for the Java standard library, whereas we obtain a mean of~1.04 and a maximum of~6 for Rust MIR.
 
-Three further threats to validity remain.
+While these results are promising, several limitations should be considered.
 First, the study is limited to the Rust standard library and may not represent application code or third-party crates.
 Second, the analysis is performed on optimised MIR for a single compiler version and host target, so the exact CFGs may vary across releases and platforms.
 Third, we analyse undirected CFGs after removing unwind-only cleanup edges, which matches the graph-theoretic notion of treewidth but abstracts away some aspects of Rust's exceptional control flow.
