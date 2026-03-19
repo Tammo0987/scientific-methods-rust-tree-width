@@ -4,7 +4,7 @@
 \subsection{Summary}
 \label{subsec:conclusion-summary}
 
-We have measured the treewidth of 27{,}997 monomorphised MIR CFGs from the Rust standard library (\texttt{core}, \texttt{alloc}, \texttt{std}).
+To evaluate the structural complexity of Rust programs, we have measured the treewidth of 27{,}997 monomorphised MIR CFGs from the Rust standard library (\texttt{core}, \texttt{alloc}, \texttt{std}).
 The mean treewidth is 1.04, the median is 1, and the maximum observed value is 6.
 Moreover, 99.65\% of all functions have treewidth at most~3, and all functions have treewidth at most~6.
 Unsafe functions do not exhibit larger treewidth than safe functions.
@@ -13,11 +13,10 @@ These findings provide strong empirical evidence that practical Rust MIR CFGs ar
 The consistently small treewidth values suggest that treewidth-based compiler optimisations are practically applicable to real Rust code.
 At the same time, the study is limited to the Rust standard library, a single compiler configuration, and MIR-level CFGs, so the results should be interpreted within that scope.
 
-
 \subsection{Future Work}
 \label{subsec:future-work}
 
-These limitations point to several directions for future work.
+These limitations noted in \ref{subsec:conclusion-summary} point to several directions for future work.
 First, it would be valuable to extend the analysis beyond the Rust standard library to third-party crates and application code, in order to assess how broadly the observed low treewidth generalises.
 
 Second, working at a higher level of abstraction, in particular Rust's HIR which remains closer to source structure, would enable a more direct comparison with the Java results of Gustedt et al.~\cite{gustedt_2002}.
