@@ -1,15 +1,12 @@
 \section{Methodology}
 \label{sec:methodology}
 
-\subsection{Overview}
-\label{subsec:overview}
-
 Our methodology consists of three stages.
 First, we extract the CFG of each function by intercepting the Rust compiler pipeline after MIR optimisation.
 Second, we compute the treewidth of each extracted CFG using \texttt{FlowCutter}~\cite{strasser_2017}.
 Third, we aggregate the per-function treewidth values into a distribution and derive summary statistics.
 
-As established in Section~\ref{sec:rust-and-mir}, MIR is the representation at which the Rust compiler performs its own flow-sensitive analyses, making it the natural level at which to study the structural complexity of Rust programs.
+As established in Section~\ref{sec:rust-and-mir}, MIR is the representation at which the Rust compiler performs its own flow-sensitive analysis, making it the natural level at which to study the structural complexity of Rust programs.
 We close the chapter by discussing our methodological choices and contextualising the approach relative to prior work.
 
 \subsection{CFG Extraction from MIR}
@@ -52,7 +49,7 @@ Because optimised MIR reflects the code after MIR-level optimisations such as in
 The approach is empirical: we measure what the treewidth of real Rust programs actually is, rather than what the language structure would theoretically bound it to.
 
 A natural question is whether the borrow checker introduces structural complexity beyond pure control flow.
-It does not: the borrow checker operates on a read-only view of the MIR and does not modify the CFG structure~\cite{rust_borrowck_guide}.
+It does not: the borrow checker operates on a read-only view of the MIR and does not modify the CFG structure~\cite[Ch.~69]{rustc_dev_guide}.
 Its annotations are removed before optimisation, and since we extract CFGs from \texttt{optimized\_mir}, borrow checker artefacts are absent from the graphs we measure.
 The treewidth values we report therefore capture control-flow structure rather than borrow checking complexity.
 
