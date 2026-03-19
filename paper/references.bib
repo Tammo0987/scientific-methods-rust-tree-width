@@ -6,6 +6,7 @@
   number  = {2},
   pages   = {159--181},
   year    = {1998},
+  issn    = {0890-5401},
   doi     = {10.1006/inco.1997.2697},
 }
 
@@ -14,10 +15,11 @@
   author    = {Gustedt, Jens and M{\ae}hle, Ole A. and Telle, Jan Arne},
   booktitle = {Algorithm {Engineering} and {Experiments}},
   editor    = {Mount, David M. and Stein, Clifford},
-  publisher = {Springer},
+  publisher = {Springer Berlin Heidelberg},
   pages     = {86--97},
   year      = {2002},
   doi       = {10.1007/3-540-45643-0_7},
+  isbn      = {978-3-540-45643-8}
 }
 
 @inproceedings{bodlaender_1998,
@@ -31,32 +33,18 @@
   month     = jan,
 }
 
-@misc{rust_borrowck_guide,
-  author       = {{The Rust Project Developers}},
-  title        = {{MIR} Borrow Check --- {Rust} Compiler Development Guide},
-  howpublished = {\url{https://rustc-dev-guide.rust-lang.org/borrow-check.html}},
-  note         = {Accessed 2026-03-13},
+@manual{rustc_dev_guide,
+  author = {{The Rust Project Developers}},
+  title  = {{Rust} Compiler Development Guide},
+  url    = {https://rustc-dev-guide.rust-lang.org/},
+  note   = {Accessed 2026-03-13},
 }
 
-@misc{rust_mir_passes_guide,
-  author       = {{The Rust Project Developers}},
-  title        = {{MIR} Queries and Passes --- {Rust} Compiler Development Guide},
-  howpublished = {\url{https://rustc-dev-guide.rust-lang.org/mir/passes.html}},
-  note         = {Accessed 2026-03-13},
-}
-
-@misc{rust_mir_guide,
-  author       = {{The Rust Project Developers}},
-  title        = {The {MIR} ({Mid-level IR}) --- {Rust} Compiler Development Guide},
-  howpublished = {\url{https://rustc-dev-guide.rust-lang.org/mir/index.html}},
-  note         = {Accessed 2026-02-13},
-}
-
-@misc{rust_loop_exprs,
-  author       = {{The Rust Project Developers}},
-  title        = {Loop Expressions --- {The Rust Reference}},
-  howpublished = {\url{https://doc.rust-lang.org/reference/expressions/loop-expr.html}},
-  note         = {Accessed 2026-02-13},
+@manual{rust_reference,
+  author = {{The Rust Project Developers}},
+  title  = {{The Rust Reference}},
+  url    = {https://doc.rust-lang.org/reference/},
+  note   = {Accessed 2026-03-13},
 }
 
 @mastersthesis{budde_2024,
@@ -89,41 +77,6 @@
   doi       = {10.1007/978-3-031-06773-0_5},
 }
 
-@misc{rust_book_ownership,
-  title        = {Understanding Ownership --- {The Rust Programming Language}},
-  author       = {{The Rust Project Developers}},
-  howpublished = {\url{https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html}},
-  note         = {Accessed 2026-03-07},
-}
-
-@misc{rust_book_borrowing,
-  title        = {References and Borrowing --- {The Rust Programming Language}},
-  author       = {{The Rust Project Developers}},
-  howpublished = {\url{https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html}},
-  note         = {Accessed 2026-03-07},
-}
-
-@misc{rust_book_lifetimes,
-  title        = {Validating References with Lifetimes --- {The Rust Programming Language}},
-  author       = {{The Rust Project Developers}},
-  howpublished = {\url{https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html}},
-  note         = {Accessed 2026-03-07},
-}
-
-@misc{rust_by_example_borrowing,
-  title        = {Borrowing --- {Rust by Example}},
-  author       = {{The Rust Project Developers}},
-  howpublished = {\url{https://doc.rust-lang.org/rust-by-example/scope/borrow.html}},
-  note         = {Accessed 2026-03-07},
-}
-
-@misc{rust_by_example_lifetimes,
-  title        = {Lifetimes --- {Rust by Example}},
-  author       = {{The Rust Project Developers}},
-  howpublished = {\url{https://doc.rust-lang.org/rust-by-example/scope/lifetime.html}},
-  note         = {Accessed 2026-03-07},
-}
-
 @misc{strasser_2017,
   title         = {Computing Tree Decompositions with {FlowCutter}: {PACE} 2017 Submission},
   author        = {Ben Strasser},
@@ -132,7 +85,6 @@
   archivePrefix = {arXiv},
   primaryClass  = {cs.DS},
   doi           = {10.48550/arXiv.1709.08949},
-  url           = {https://arxiv.org/abs/1709.08949},
 }
 
 @article{allen_1970,
@@ -143,5 +95,69 @@
   number  = {7},
   pages   = {1--19},
   year    = {1970},
+  issn    = {0362-1340},
   doi     = {10.1145/390013.808479},
+}
+
+@article{bodlaenderTouristGuideTreewidth,
+  title = {A Tourist Guide through Treewidth},
+  author = {Bodlaender, Hans L.},
+  date = {1993-01-01},
+  journaltitle = {Acta Cybernetica},
+  volume = {11},
+  number = {1--2},
+  pages = {1--21},
+  publisher = {University of Szeged},
+  issn = {2676-993X},
+  url = {https://cyber.bibl.u-szeged.hu/index.php/actcybern/article/view/3417},
+}
+
+
+@article{graphminors,
+  title = {Graph Minors. {{II}}. {{Algorithmic}} Aspects of Tree-Width},
+  author = {Robertson, Neil and Seymour, P.D},
+  date = {1986-09},
+  journaltitle = {Journal of Algorithms},
+  shortjournal = {Journal of Algorithms},
+  volume = {7},
+  number = {3},
+  pages = {309--322},
+  issn = {0196-6774},
+  doi = {10.1016/0196-6774(86)90023-4},
+}
+
+@inproceedings{bodlaenderDynamicProgrammingGraphs1988,
+  title = {Dynamic Programming on Graphs with Bounded Treewidth},
+  booktitle = {Automata, {{Languages}} and {{Programming}}},
+  author = {Bodlaender, Hans L.},
+  editor = {Lepistö, Timo and Salomaa, Arto},
+  year = {1988},
+  pages = {105--118},
+  publisher = {Springer Berlin Heidelberg},
+  location = {Berlin, Heidelberg},
+  doi = {10.1007/3-540-19488-6_110},
+  abstract = {In this paper we study the complexity of graph decision problems, restricted to the class of graphs with treewidth ≤k, (or equivalently, the class of partial k-trees), for fixed k. We introduce two classes of graph decision problems, LCC and ECC, and subclasses C-LCC, and C-ECC. We show that each problem in LCC (or C-LCC) is solvable in polynomial (O(nC)) time, when restricted to graphs with fixed upper bounds on the treewidth and degree; and that each problem in ECC (or C-ECC) is solvable in polynomial (O(nC)) time, when restricted to graphs with a fixed upper bound on the treewidth (with given corresponding tree-decomposition). Also, problems in C-LCC and C-ECC are solvable in polynomial time for graphs with a logarithmic treewidth, and in the case of C-LCC-problems, a fixed upper bound on the degree of the graph.},
+  isbn = {978-3-540-39291-0},
+  langid = {english},
+  keywords = {dynamic programming,graph decision problems,local condition compositions,partial k-trees,polynomial time algorithms,restrictions of NP-complete problems,Treewidth},
+}
+
+
+@BOOK{rust_book,
+  title     = "The rust programming language, 3rd edition",
+  author    = "Nichols, Carol and Krycho, Chris and Klabnik, Steve",
+  publisher = "No Starch Press",
+  month     =  mar,
+  year      =  2026,
+  address   = "San Francisco, CA",
+  language  = "en"
+}
+
+@book{muchnick1997advanced,
+  title     = {Advanced Compiler Design and Implementation},
+  author    = {Muchnick, Steven S.},
+  year      = {1997},
+  publisher = {Morgan Kaufmann},
+  address   = {San Francisco, CA},
+  isbn      = {978-1-55860-320-2}
 }
