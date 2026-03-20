@@ -8,6 +8,9 @@ Empirical treewidth analysis of Rust control-flow graphs extracted from MIR.
 rustc (MIR)  ->  mir-extractor  ->  JSONL  ->  analyzer  ->  CSV + summary.json
 ```
 
+For exact toolchain, dependency, and environment metadata which you can use to reproduce the results in the paper,
+see [`REPRODUCIBILITY.md`](./REPRODUCIBILITY.md).
+
 | Tool | Description |
 |---|---|
 | `mir-extractor` | Custom `rustc` driver, extracts CFG of every function after MIR optimisation |
