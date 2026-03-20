@@ -7,10 +7,10 @@
 A compiler represents the execution structure of a program as a \emph{control-flow graph} (CFG).
 
 \begin{definition}[Control-Flow Graph]
-A \emph{control-flow graph} is a directed graph $G = (V, E)$ where each node $v \in V$ is a \emph{basic block}, a straight-line sequence of instructions with a single entry and a single exit point, and each edge $(u, v) \in E$ represents a possible transfer of control from block $u$ to block $v$~\cite{allen_1970}.
+	A \emph{control-flow graph} is a directed graph $G = (V, E)$ where each node $v \in V$ is a \emph{basic block}, a straight-line sequence of instructions with a single entry and a single exit point, and each edge $(u, v) \in E$ represents a possible transfer of control from block $u$ to block $v$~\cite{allen_1970}.
 \end{definition}
 
-The topology of CFGs is determined by a program's control structure.
+\noindent The topology of CFGs is determined by a program's control structure.
 Sequential statements produce linear chains of basic blocks, while additional control constructs such as conditionals, loops and function exits make the flow between nodes more complicated.
 For example, loops create edges that point back to earlier blocks in the graph~\cite[Ch.~7]{muchnick_1997}.
 
@@ -22,20 +22,20 @@ Many computational problems that are NP-hard on general graphs can be solved eff
 We first define tree decompositions, then treewidth in terms of them.
 
 \begin{definition}[Tree Decomposition]
-A \emph{tree decomposition} of a graph $G = (V, E)$ is a pair $(X, T)$, where $T$ is a tree and $X = \{X_1, \ldots, X_n\}$ is a family of subsets of $V$ (called \emph{bags}), one per node of $T$, satisfying:
-\begin{itemize}
-	\item $\bigcup_{i} X_i = V$: every vertex of $G$ appears in at least one bag.
-	\item For every edge $(x, y) \in E$, there exists a bag $X_i$ such that $x \in X_i$ and $y \in X_i$.
-	\item For every vertex $v \in V$, the set of bags $\{X_i \mid v \in X_i\}$ forms a connected subtree of $T$.
-\end{itemize}
-The \emph{width} of a tree decomposition is $\max_i |X_i| - 1$~\cite{robertson_1986}.
+	A \emph{tree decomposition} of a graph $G = (V, E)$ is a pair $(X, T)$, where $T$ is a tree and $X = \{X_1, \ldots, X_n\}$ is a family of subsets of $V$ (called \emph{bags}), one per node of $T$, satisfying:
+	\begin{itemize}
+		\item $\bigcup_{i} X_i = V$: every vertex of $G$ appears in at least one bag.
+		\item For every edge $(x, y) \in E$, there exists a bag $X_i$ such that $x \in X_i$ and $y \in X_i$.
+		\item For every vertex $v \in V$, the set of bags $\{X_i \mid v \in X_i\}$ forms a connected subtree of $T$.
+	\end{itemize}
+	The \emph{width} of a tree decomposition is $\max_i |X_i| - 1$~\cite{robertson_1986}.
 \end{definition}
 
 \begin{definition}[Treewidth]
-The \emph{treewidth} of a graph $G$, denoted $\mathrm{tw}(G)$, is the minimum width over all valid tree decompositions of $G$~\cite{robertson_1986}.
+	The \emph{treewidth} of a graph $G$, denoted $\mathrm{tw}(G)$, is the minimum width over all valid tree decompositions of $G$~\cite{robertson_1986}.
 \end{definition}
 
-A treewidth of~1 corresponds to a tree.
+\noindent A treewidth of~1 corresponds to a tree.
 As treewidth increases, the graph becomes less tree-like and structurally more complex.
 
 \paragraph{Relevance \& CFG connection}
