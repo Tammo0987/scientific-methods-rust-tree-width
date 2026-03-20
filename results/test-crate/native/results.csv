@@ -1,0 +1,12 @@
+name,crate,blocks,edges,stmt_count,treewidth,is_unsafe
+"trivial",test_crate,2,1,2,1,0
+"linear_sequence",test_crate,4,3,6,1,0
+"if_else",test_crate,6,6,5,2,0
+"nested_if",test_crate,13,15,13,2,0
+"simple_loop",test_crate,6,6,10,2,0
+"match_three",test_crate,5,6,3,2,0
+"loop_with_break",test_crate,10,11,17,2,0
+"nested_loops",test_crate,12,14,14,2,0
+"unsafe_raw",test_crate,3,2,12,1,1
+"multiple_returns",test_crate,6,7,5,2,0
+"short_circuit",test_crate,5,6,2,2,0
