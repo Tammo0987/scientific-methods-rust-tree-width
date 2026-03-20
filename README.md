@@ -9,7 +9,7 @@ rustc (MIR)  ->  mir-extractor  ->  JSONL  ->  analyzer  ->  CSV + summary.json
 ```
 
 For exact toolchain, dependency, and environment metadata which you can use to reproduce the results in the paper,
-see [`REPRODUCIBILITY.md`](./REPRODUCIBILITY.md).
+see [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md).
 
 | Tool | Description |
 |---|---|

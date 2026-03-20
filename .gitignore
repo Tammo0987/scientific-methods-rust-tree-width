@@ -1,19 +1,6 @@
-# Devenv
-.devenv*
-devenv.local.nix
-devenv.local.yaml
-
-# direnv
-.direnv
-
-# pre-commit
-.pre-commit-config.yaml
-
-# Latex
-
-*.aux
-*.log
-*.fls
-*.out
-*.pdf
-*.fdb_latexmk
+/target/
+/results/
+.devenv/
+.direnv/
+.devenv.flake.nix
+.idea

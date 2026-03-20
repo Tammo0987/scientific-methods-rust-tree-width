@@ -1,6 +1,0 @@
-/target/
-/results/
-.devenv/
-.direnv/
-.devenv.flake.nix
-.idea
