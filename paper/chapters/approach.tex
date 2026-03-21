@@ -24,7 +24,7 @@ Each MIR basic block becomes a node and each control-flow edge between blocks be
 Edges into \emph{cleanup blocks}, basic blocks only reachable via a Rust panic or unwind, are excluded, restricting the graph to normal execution paths.
 This is analogous to the treatment in Gustedt et al., where Java exceptions are absent from the CFG representation by construction~\cite{gustedt_2002}.
 Because treewidth is defined on simple undirected graphs, multi-edges are deduplicated and edges are treated as unordered pairs.
-The result is serialised as a JSONL record per function for downstream analysis.
+The intermediate result is then stored for further analysis.
 
 \subsection{Treewidth Computation}
 \label{subsec:treewidth-computation}
@@ -40,7 +40,7 @@ The full distribution over treewidth values is reported for all functions combin
 \label{subsec:methodology-discussion}
 
 Gustedt et al.\ are the closest prior work to ours, but the two studies answer subtly different questions~\cite{gustedt_2002}.
-Following Thorup, Gustedt et al.\ ask: \emph{what does the structure of the language guarantee?}~\cite{thorup_1998}
+Following Thorup, Gustedt et al.\ ask: \emph{what does the structure of the programming language guarantee?}~\cite{thorup_1998}
 We ask: \emph{what do real Rust programs actually look like, after the compiler has processed them?}
 These are complementary, not competing, perspectives.
 

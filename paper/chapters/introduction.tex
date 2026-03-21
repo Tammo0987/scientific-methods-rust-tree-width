@@ -11,13 +11,14 @@ Understanding the structural complexity of real-world CFGs therefore has direct 
 Thorup established that CFGs of goto-free C programs have a treewidth of at most six, connecting structured programming directly to bounded treewidth~\cite{thorup_1998}.
 Building on this, Gustedt et al. investigated whether the same holds in practice for Java, finding a theoretical bound of at most six for label-free Java and confirming empirically that real Java methods exhibit small treewidth values, with an average of 2.7 and a maximum of five in the Java standard library~\cite{gustedt_2002}.
 
-Based on these results, we raise a similar question for modern programming languages: \textit{what is the treewidth of Rust programs?}
+Based on these results, we raise a similar question for a modern programming language: \textit{what is the treewidth of Rust programs?}
 Rather than analysing source-level control flow, we operate on the Mid-level Intermediate Representation (MIR), the compiler's internal CFG representation on which our measurements are based.
 
 By intercepting the Rust compiler pipeline after MIR optimisation, we extract the CFG of each function and compute its treewidth using FlowCutter.
 This measures structural complexity at the same level at which the compiler performs its analyses.
+\linebreak
 
-Our contributions are as follows:
+\noindent Our contributions are as follows:
 \begin{enumerate}
 	\item \textbf{Tool:} We implement \texttt{mir-extractor}, a custom
 	\texttt{rustc} compiler driver that extracts MIR CFGs as undirected graphs
@@ -33,7 +34,7 @@ Our contributions are as follows:
 	analogous to Thorup's cannot be derived at the MIR level.
 \end{enumerate}
 
-The remainder of this paper is structured as follows.
+\noindent The remainder of this paper is structured as follows.
 We begin by introducing the necessary background on CFGs and treewidth (Section~\ref{sec:background}) and reviewing prior work on the treewidth of structured programs (Section~\ref{sec:related-work}).
 We then provide background on Rust and MIR (Section~\ref{sec:rust-and-mir}) before describing the methodology for extracting CFGs and computing their treewidth (Section~\ref{sec:methodology}).
 Finally, we present and discuss the results (Section~\ref{sec:evaluation}) and summarise the findings with directions for future work (Section~\ref{sec:conclusion}).

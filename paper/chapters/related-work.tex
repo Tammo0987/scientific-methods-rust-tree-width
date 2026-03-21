@@ -3,7 +3,7 @@
 
 \subsection{Treewidth of Structured Programs}
 \label{subsec:rw-treewidth-structured}
-In earlier work, Thorup analyses the treewidth of CFGs of structured programs and shows that they have bounded treewidth.
+Thorup analyses the treewidth of CFGs of structured programs and shows that they have bounded treewidth.
 The main idea of his research is that structured programs have no \texttt{goto} jumps, which restricts the control flow and therefore limits the complexity of their CFGs.
 In particular, Thorup shows that goto-free Algol and Pascal programs have a treewidth of $\leq3$, all Modula-2 programs have a treewidth of $\leq5$ and goto-free C programs have a treewidth of $\leq6$, assuming all languages have \texttt{short-circuit evaluation}~\cite{thorup_1998}.
 
@@ -14,8 +14,7 @@ By visiting the statements of a structured program and computing their separator
 In the case of goto-free C programs, the higher bound of 6 arises from the presence of \texttt{continue} statements in loops, which expand the separator listings of neighbors.
 Modula-2 programs, by contrast, do not have \texttt{continue} statements, and therefore have a treewidth of $\leq5$.
 
-Thorup's results provide a theoretical basis for analysing structured programs, showing they have bounded treewidth.
-This is relevant for our work, as it establishes how language-specific control-flow constructs influence CFG complexity, motivating the study of bounded treewidth in modern programming languages, such as Rust.
+This establishes how language-specific control-flow constructs influence CFG complexity, motivating the study of bounded treewidth in modern programming languages, such as Rust.
 
 \subsection{Treewidth of Java Programs}
 \label{subsec:rw-java}
@@ -25,12 +24,14 @@ Thorup showed that \texttt{goto}-free C programs have CFG treewidth at most~6, u
 
 Although Java has no \texttt{goto} statement, its labeled \texttt{break} and \texttt{continue} statements are expressively equivalent to \texttt{goto}.
 Consequently, unrestricted Java programs can have arbitrarily high treewidth.
-Restricting to a label-free subset eliminates this issue: label-free Java has exactly four FACs (\texttt{break}, \texttt{continue}, \texttt{return}, and \texttt{short-circuit evaluation}), yielding a theoretical treewidth bound of at most~$2 + 4 = 6$.
+Restricting to a label-free subset eliminates this issue: label-free Java has exactly four FACs (\texttt{break}, \texttt{continue}, \texttt{return} and \texttt{short-circuit evaluation}).
+Every program has at least a treewidth of 2, since the CFG is a series-parallel graph.
+Therefore, it yields a theoretical treewidth bound of at most~$2 + 4 = 6$.
 
 To complement this theoretical bound, the authors implement a tool to compute tree decompositions of Java CFGs and apply it to 9387 methods from the Java standard library.
 The average treewidth is~2.7 and the maximum observed is~5, with over 95\% of methods having treewidth at most~3, well below the theoretical bound.
 
-This paper is directly relevant to our work: it establishes both a theoretical treewidth bound and empirical baselines for a real-world language, serving as the primary comparison point for our analogous analysis of Rust programs.
+This paper provides both a theoretical treewidth bound and empirical baselines for a real-world language, serving as the primary comparison point for our analogous analysis of Rust programs.
 
 \subsection{MIR-Based Program Analysis}
 \label{subsec:rw-rust-analysis}

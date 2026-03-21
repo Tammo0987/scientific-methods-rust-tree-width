@@ -39,8 +39,8 @@ This motivates measuring treewidth empirically on the compiler's internal repres
 \subsection{Mid-level Intermediate Representation}
 \label{subsec:mir}
 
-The Rust compiler lowers functions into the \emph{Mid-level Intermediate Representation} (MIR) after parsing and earlier compilation stages~\cite[Ch.~44]{rustc_dev_guide}.
-MIR is a control-flow graph: it consists of basic blocks containing simple typed statements, together with explicit control-flow transfers between those blocks.
+The Rust compiler lowers functions into the MIR after parsing and earlier compilation stages~\cite[Ch.~44]{rustc_dev_guide}.
+The control-flow graph can be induced from the MIR: it consists of basic blocks containing simple typed statements, together with explicit control-flow transfers between those blocks.
 A basic block is a sequence of statements followed by a \emph{terminator}.
 Terminators represent control transfers with potentially multiple successors, covering branching, function calls, drops, and returns.
 Once lowered to MIR, execution order is no longer implicit in the source structure but is represented explicitly as a graph.

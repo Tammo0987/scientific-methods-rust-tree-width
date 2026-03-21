@@ -28,10 +28,28 @@ Treewidth is very small across the corpus. Over all 27{,}997 functions, the mean
 	\label{tab:evaluation-summary}
 \end{table}
 
-The distribution is strongly concentrated at very small values: 97.90\% of all functions have treewidth at most~2, and only 97 functions (0.35\%) exceed treewidth~3. Among these outliers, 90 functions have treewidth~4, 5 have treewidth~5, and 2 reach treewidth~6. The largest values occur in a small number of formatting and systems-oriented routines with unusually branch-heavy control flow.
+\noindent Table~\ref{tab:evaluation-distribution} shows that the distribution is strongly concentrated at very small values: 97.90\% of all functions have treewidth at most~2, and only 97 functions (0.35\%) exceed treewidth~3. The largest values occur in a small number of formatting and systems-oriented routines with unusually branch-heavy control flow.
+\begin{table}[h]
+	\centering
+	\begin{tabular}{lrr}
+		\hline
+		Treewidth & Count  & Share \\
+		\hline
+		0         & 3{,}853 & 13.76\% \\
+		1         & 19{,}773 & 70.63\% \\
+		2         & 3{,}783 & 13.51\% \\
+		3         & 491    & 1.75\% \\
+		4         & 90     & 0.32\% \\
+		5         & 5      & 0.02\% \\
+		6         & 2      & 0.01\% \\
+		\hline
+	\end{tabular}
+    \caption{Distribution of treewidth values across all functions in the Rust standard library
+   MIR corpus.}
+    \label{tab:evaluation-distribution}
+\end{table}
 
 The safe/unsafe split does not indicate higher structural complexity for unsafe Rust in this corpus. Unsafe functions have a slightly lower mean treewidth than safe functions (0.97 versus 1.06), and their maximum observed treewidth is only~4.
-
 
 \subsection{Discussion}
 \label{subsec:discussion}
@@ -39,7 +57,7 @@ The safe/unsafe split does not indicate higher structural complexity for unsafe 
 Overall the results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result~\cite{thorup_1998}, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 associated with structured C and Java fragments, and the maximum observed value is exactly~6.
 
 For further context, the results invite comparison with the Java study of Gustedt et al., which should be interpreted with care: their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs~\cite{gustedt_2002}.
-In particular, treewidth~0 and~1 are common in our setting but cannot occur in their construction.
+In particular, treewidth~0 and~1 are common in our setting but cannot occur in their construction due to Thorup's decomposition algorithm.
 With this in mind, they report an average treewidth of about~2.7 and a maximum of~5 for the Java standard library, whereas we obtain a mean of~1.04 and a maximum of~6 for Rust MIR.
 
 While these results are promising, several limitations should be considered.
