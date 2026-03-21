@@ -27,7 +27,7 @@ The borrow checker therefore operates directly on the CFG, and ownership constra
 \label{subsec:rust-control-flow}
 
 The structure of Rust's control flow is the other main factor shaping CFG complexity.
-Rust uses predominantly \emph{structured} control flow: execution is expressed through conditional expressions, pattern matching, and loops rather than arbitrary jumps~\cite[Ch. 8.2.13]{rust_reference}.
+Rust uses predominantly \emph{structured} control flow: execution is expressed through conditional expressions, pattern matching, and loops rather than arbitrary jumps~\cite[Ch.~8.2.13]{rust_reference}.
 This is one of the main reasons CFGs of real programs tend to remain relatively simple, as prior work on goto-free language fragments has shown~\cite{thorup_1998}.
 
 Certain language features can make the compiled control-flow graph more complex than the source structure suggests.

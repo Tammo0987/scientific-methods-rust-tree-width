@@ -12,14 +12,14 @@
   Steffens, Tammo
 }
 
-\date{\today}
+\date{}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-	Treewidth is a measure of how close a Graph is to being a tree.
+	Treewidth is a measure of how close a graph is to being a tree.
 	It has direct applications in compiler optimization.
 	Thorup~(1998) showed that the control-flow graphs~(CFGs) of goto-free C programs have treewidth at most~6, enabling efficient register allocation.
 	Gustedt, M{\ae}hle, and Telle~(2002) extended this result to label-free Java and confirmed it empirically on the Java standard library, finding an average treewidth of~2.7 and a maximum of~5.
@@ -32,7 +32,7 @@
 	These findings suggest that treewidth-based compiler optimisations are practically applicable to real Rust programs.
 \end{abstract}
 
-\noindent\textbf{Keywords:} treewidth, control-flow graphs, Rust, MIR, empirical study, compiler optimization
+\noindent\textbf{Keywords:} treewidth, control-flow graphs, Rust, MIR, compiler optimisation
 
 \input{chapters/introduction}
 \input{chapters/background}
@@ -66,6 +66,6 @@ The implementation tooling for this project was produced through an iterative, A
 This was a two-directional process: AI tools proposed implementations that were reviewed and corrected by the authors, and authors proposed code that was reviewed by AI tools and subsequently revised by the authors. Just like for writing and structuring, in all cases suggestions were critically reviewed, revised, or rejected.
 
 \paragraph{Tools and models.}
-The primary AI tool used were Claude by Anthropic and ChatGPT by OpenAI, accessed through the official interface and local tooling such as the Claude Code CLI and editor integrations.
+The primary AI tools used were Claude by Anthropic and ChatGPT by OpenAI, accessed through the official interface and local tooling such as the Claude Code CLI and editor integrations.
 
 \end{document}

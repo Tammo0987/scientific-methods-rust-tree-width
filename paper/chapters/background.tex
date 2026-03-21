@@ -22,7 +22,7 @@ Many computational problems that are NP-hard on general graphs can be solved eff
 We first define tree decompositions, then treewidth in terms of them.
 
 \begin{definition}[Tree Decomposition]
-A \emph{tree decomposition} of a graph $G = (V, E)$ is a pair $(X, T)$, where $T$ is a tree and $X = \{X_1, \ldots, X_n\}$ is a family of subsets of $V$ (called \emph{bags}), one per node of $T$, satisfying:
+A \emph{tree decomposition} of a graph $G = (V, E)$ is a pair $(X, T)$, where $T$ is a tree and $X = \{X_2, \ldots, X_n\}$ is a family of subsets of $V$ (called \emph{bags}), one per node of $T$, satisfying:
 \begin{itemize}
 	\item $\bigcup_{i} X_i = V$: every vertex of $G$ appears in at least one bag.
 	\item For every edge $(u, v) \in E$, there exists a bag $X_i$ such that $u \in X_i$ and $v \in X_i$.

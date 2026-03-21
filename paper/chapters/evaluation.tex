@@ -54,9 +54,10 @@ The safe/unsafe split does not indicate higher structural complexity for unsafe 
 \subsection{Discussion}
 \label{subsec:discussion}
 
-Overall the results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result~\cite{thorup_1998}, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 associated with structured C and Java fragments, and the maximum observed value is exactly~6.
+Overall, the results support the hypothesis that practical Rust CFGs have small treewidth. Even without a Rust-specific structural proof analogous to Thorup's result~\cite{thorup_1998}, the empirical picture is clear: almost all MIR CFGs lie well below the bound of~6 associated with structured C and Java fragments, and the maximum observed value is exactly~6.
 
-For further context, the results invite comparison with the Java study of Gustedt et al., which should be interpreted with care: their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs~\cite{gustedt_2002}.
+For further context, our results can be compared to the Java study of Gustedt et al.~\cite{gustedt_2002}.
+This comparison requires care: their analysis is source-level and structurally constrained, while ours is based on MIR basic-block CFGs.
 In particular, treewidth~0 and~1 are common in our setting but cannot occur in their construction due to Thorup's decomposition algorithm.
 With this in mind, they report an average treewidth of about~2.7 and a maximum of~5 for the Java standard library, whereas we obtain a mean of~1.04 and a maximum of~6 for Rust MIR.
 
