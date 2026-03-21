@@ -5,6 +5,7 @@ Our methodology consists of three stages.
 First, we extract the CFG of each function by intercepting the Rust compiler pipeline after MIR optimisation.
 Second, we compute the treewidth of each extracted CFG using \texttt{FlowCutter}~\cite{strasser_2017}.
 Third, we aggregate the per-function treewidth values into a distribution and derive summary statistics.
+The implementation used for this study is available as an archived Zenodo software release~\cite{repo}.
 
 As established in Section~\ref{sec:rust-and-mir}, MIR is the representation at which the Rust compiler performs its own flow-sensitive analysis, making it the natural level at which to study the structural complexity of Rust programs.
 We close the chapter by discussing our methodological choices and contextualising the approach relative to prior work.
@@ -13,9 +14,9 @@ We close the chapter by discussing our methodological choices and contextualisin
 \label{subsec:cfg-extraction}
 
 CFGs are extracted using a custom \texttt{rustc} compiler driver (\texttt{mir-extractor}) that hooks into the compiler pipeline at the \texttt{after\_analysis} phase, at which point we use the optimised MIR for each function (see Section~\ref{sec:rust-and-mir}).
+
 For each eligible function, it builds a simple undirected graph from the basic-block structure of the MIR body, normalises it, and serialises the result for downstream analysis.
 We target the Rust standard library (\texttt{core}, \texttt{alloc}, \texttt{std}), compiled for the host platform, as a representative for real-world Rust code.
-
 We analyse free functions and methods defined in \texttt{impl} blocks.
 Because Rust supports generics, each concrete instantiation of a generic function is compiled to its own MIR body and treated as a separate function.
 For example, a generic function \texttt{fn push<T>} gives rise to distinct entries for \texttt{Vec<u8>::push} and \texttt{Vec<String>::push}, each potentially with a different CFG.
