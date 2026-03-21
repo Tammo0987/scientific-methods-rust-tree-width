@@ -1,3 +1,116 @@
+# rust-treewidth
+
+Empirical treewidth analysis of Rust control-flow graphs extracted from MIR.
+
+## How it works
+
+```
+rustc (MIR)  ->  mir-extractor  ->  JSONL  ->  analyzer  ->  CSV + summary.json
+```
+
+| Tool | Description |
+|---|---|
+| `mir-extractor` | Custom `rustc` driver, extracts CFG of every function after MIR optimisation |
+| `analyzer` | Reads JSONL, computes treewidth in parallel, writes `results.csv` and `summary.json` |
+
+## Usage
+
+```bash
+./analyze.sh <crate-name> [analyzer-flags...]
+```
+
+Outputs go to `results/<crate-name>/`. Analyzer flags such as `--verify-oracle` control verification behavior.
+
+```bash
+./analyze.sh test-crate
+./analyze.sh std
+./analyze.sh test-crate --verify-oracle
+```
+
+The special crate name `std` extracts `core + alloc + std` via `-Z build-std`.
+By default this uses your host target triple.
+
+## macOS setup
+
+This project requires `nightly` + rustc internals for `mir-extractor`.
+
+```bash
+export PATH="$HOME/.cargo/bin:$PATH"
+rustup toolchain install nightly
+rustup component add --toolchain nightly rustc-dev rust-src llvm-tools-preview
+```
+
+If you need a non-host target for `std` extraction, set:
+
+```bash
+ANALYZE_TARGET=<target-triple> ./analyze.sh std
+```
+
+## FlowCutter oracle setup
+
+`flow-cutter-pace17` is included as a git submodule at `./flow-cutter-pace17/`.
+When cloning this repository, initialise it with:
+
+```bash
+git clone --recurse-submodules <repo-url>
+```
+
+Or, if you already have a clone without the submodule:
+
+```bash
+git submodule update --init
+```
+
+The analyzer will automatically compile the C++ sources and link them via FFI
+as a verification oracle. Then run:
+
+```bash
+./analyze.sh std --verify-oracle
+```
+
+## Project layout
+
+```
+crates/
+  mir-extractor/   custom rustc driver (MIR -> JSONL)
+  analyzer/        JSONL -> treewidth -> CSV + summary.json
+test-crate/        validation crate (11 control-flow examples)
+analyze.sh         full pipeline script
+results/           output
+```
+
+## Environment variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `MIR_OUTPUT` | stdout | Path to JSONL output file for `mir-extractor` |
+| `MIR_CRATES` | (all) | Comma-separated crate allowlist for `mir-extractor` |
+| `RAYON_NUM_THREADS` | CPUs | Parallel solver threads in `analyzer` |
+
+# Reproducibility
+
+This project depends on a nightly Rust toolchain because `mir-extractor`
+links against `rustc_private` crates and the `std` analysis path uses
+`-Z build-std`.
+
+The exact toolchain and environment used for the experiments in the paper are:
+- Rust toolchain: `nightly-2026-03-10`
+- `rustc`: `1.96.0-nightly (0c68443b0 2026-03-10)`
+- `cargo`: `1.96.0-nightly (90ed291a5 2026-03-05)`
+- Rust components required by this repo: `rustc-dev`, `rust-src`, `llvm-tools`, `rustfmt`, `clippy`, `rust-analyzer`
+- Host/target triple used in this environment: `aarch64-apple-darwin`
+- Operating system: `macOS 26.3.1 (build 25D2128)`
+- Kernel: `Darwin 25.3.0`
+- Native C++ compiler used to build the FlowCutter FFI bridge: `Apple clang 17.0.0 (clang-1700.6.4.2)`
+- FlowCutter oracle source revision: `7f94541b0119284ea9322d528cef420e041539b6`
+
+The Rust dependency closure is pinned in `Cargo.lock`. The most relevant direct crate versions are:
+- `serde 1.0.228`
+- `serde_json 1.0.149`
+- `clap 4.5.60`
+- `rayon 1.11.0`
+- `cc 1.2.56`
+
 # Treewidth Methodology Notes
 
 ## On Treewidth 0
@@ -125,3 +238,4 @@ This comparison would be scientifically valuable for several reasons:
   control flow into basic blocks
 - **Rust-specific FACs**: how `?`, labeled breaks, and closures affect the structural bound
   compared to Java, and whether Rust's tw bound is similar to C's (≤6)
+
