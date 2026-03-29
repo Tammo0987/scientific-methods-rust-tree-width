@@ -57,8 +57,7 @@
 
 #tslide(title: "Why MIR?")[
   - Gustedt et al. had to construct CFGs from source (following Thorup's decomposition)
-  - Rust's compiler already gives us MIR: its own explicit CFG
-  - MIR is what the compiler actually works with: basic blocks + terminators
+  - Rust's compiler already gives us MIR: its own explicit CFG of basic blocks + terminators
 ]
 
 #tslide(title: "Step 1 — CFG Extraction")[
@@ -126,22 +125,21 @@
 ]
 
 #tslide(title: "Step 2 — Treewidth via FlowCutter")[
-  *FlowCutter* #text(fill: subtext, size: 0.82em)[(Strasser, 2017)]: a practical treewidth solver
-
-  #v(0.5em)
-
-  - *Anytime algorithm*: returns best decomposition found so far
-  - *Deterministic*: repeated runs produce identical results
-  - Runs in *parallel*, one solver per CPU core
-  - *30-second timeout* per function
-
-  #v(0.5em)
-  #callout[
-    Chosen because treewidth computation is NP-hard in general,
-    FlowCutter finds good decompositions quickly in practice.
-  ]
+  - Treewidth is *NP-hard*, implementing a solver ourselves is not feasible
+  - *FlowCutter* #text(fill: subtext, size: 0.82em)[(Strasser, 2017)] already works well in practice for this kind of graph
+  - We transform our CFGs to FlowCutter's input format and reuse it as a black box
 ]
 
 #tslide(title: "Pipeline Overview")[
   #pipeline(active: "results")
+]
+
+#tslide(title: "Step 3 — Collecting Results")[
+  - FlowCutter returns a treewidth value for each function
+  - We collected these results
+
+  #v(0.5em)
+  #callout[
+    What do these numbers tell us?
+  ]
 ]
