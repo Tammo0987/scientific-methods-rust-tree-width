@@ -182,13 +182,12 @@
   + *Scope* — stdlib only
   + *Single configuration* — one compiler + target
   + *MIR-level* — compiler IR, not source structure
-  + *Undirected graphs* — unwind edges removed, like Java exceptions
-  + *No formal bound* — MIR erases source-level nesting
+  + *Empirical only* — no Rust-specific theoretical bound yet
 ]
 
 #tslide(title: "Future Work")[
   - *Broader corpus*: analyse crates beyond the stdlib
   - *HIR-level analysis*: compare Rust to Java at source level
   - *Restricted fragments*: derive Thorup-style bounds for Rust subsets
-  - *Compiler integration*: prototype treewidth-aware optimizations
+  - *Compiler integration*: leverage low treewidth in CFG optimization
 ]
