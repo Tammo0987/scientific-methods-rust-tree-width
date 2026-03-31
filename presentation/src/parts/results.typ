@@ -8,9 +8,15 @@
 
 #tslide(title: "Setup")[
   - Target: Rust standard library for `aarch64-apple-darwin`
-  - Compiler: stable Rust toolchain
-  - Treewidth computed by *FlowCutter* with 30 s timeout per function
-  - All 27,997 functions completed within timeout
+  - Corpus: `core`, `alloc` and `std`
+  - Treewidth computed on MIR CFG using *FlowCutter* with timeout
+]
+
+#tslide(title: "Functions")[
+  - Total: 27,997 
+  - Safe: 22,273 
+  - Unsafe: 5,724
+  - Includes: monomorphised generics
 ]
 
 #tslide(title: "Summary Results")[
@@ -39,9 +45,11 @@
     th[tw], th[0], th[1], th[2], th[3], th[4], th[5], th[6],
     [%], hi[13.76], hi[70.63], [13.51], [1.75], [0.31], [0.03], [0.004],
     [cum.], [13.76], [84.39], [97.90], [99.65], [99.96], [99.99], [100],
+    [count.], hi[3,853], hi[19,773], [3,783], [491], [90], [5], [2],
   )
 
   #v(0.5em)
+  - Total *27,997* functions
   - #hi[84%] of functions have treewidth $<= 1$ (trees or forests)
   - Only *97 functions* (0.35%) exceed treewidth 3
 ]
@@ -51,12 +59,6 @@
   - Unsafe functions have slightly *lower* mean treewidth (0.97 vs 1.06)
   - Max treewidth: safe = *6*, unsafe = *4*
   - Unsafe Rust does *not* exhibit higher structural complexity
-
-  #v(0.6em)
-  #callout[
-    Unsafe code tends to be short, low-level routines —
-    simple CFGs with few branches.
-  ]
 ]
 
 #tslide(title: "Comparison with Java")[
