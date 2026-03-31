@@ -134,12 +134,3 @@
   #pipeline(active: "results")
 ]
 
-#tslide(title: "Step 3 — Collecting Results")[
-  - FlowCutter returns a treewidth value for each function
-  - We collected these results
-
-  #v(0.5em)
-  #callout[
-    What do these numbers tell us?
-  ]
-]
