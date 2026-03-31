@@ -6,15 +6,10 @@
 
 #section-slide("Results", subtitle: "Experimental Findings")
 
-#tslide(title: "Setup")[
-  - Target: Rust standard library for `aarch64-apple-darwin`
-  - Corpus: `core`, `alloc` and `std`
-  - Treewidth computed on MIR CFG using *FlowCutter* with timeout
-]
-
 #tslide(title: "Functions")[
-  - Total: 27,997 
-  - Safe: 22,273 
+  - Target: Rust standard library for `aarch64-apple-darwin`
+  - Total: 27,997
+  - Safe: 22,273
   - Unsafe: 5,724
   - Includes: monomorphised generics
 ]
