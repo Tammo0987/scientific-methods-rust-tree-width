@@ -10,7 +10,7 @@
   - Compilers use *control-flow graphs* (CFGs) to represent execution structure of a program
   - *Treewidth* measures how close a graph is to being a tree
   - Low treewidth $=>$ NP-hard problems admit to linear time
-    - e.g. register allocation & data-flow analysis 
+    - e.g. register allocation & data-flow analysis
 
   #v(0.6em)
   #callout[
@@ -19,7 +19,7 @@
 ]
 
 #tslide(title: "Recap — Treewidth")[
-  A *tree decomposition* of graph maps nodes into _bags_ on a tree:
+  A *tree decomposition* of a graph maps nodes into _bags_ on a tree:
 
   #v(0.3em)
 
@@ -36,7 +36,7 @@
 
 #tslide(title: "Prior Work — Thorup (1998)")[
   - Structured programs (`goto`-free) have *bounded* CFG treewidth
-  - Results: 
+  - Results:
     #text(size: 0.82em)[- Modula-2 $<= 5$]
     #text(size: 0.82em)[- Algol/Pascal $<= 3$]
     #text(size: 0.82em)[- Goto-free C: treewidth *$<= 6$*]
