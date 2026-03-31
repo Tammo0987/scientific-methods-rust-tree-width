@@ -179,22 +179,16 @@
 ]
 
 #tslide(title: "Limitations")[
-  + *Scope* — only the Rust standard library, not third-party crates
-  + *Single configuration* — one compiler version, one target triple
-  + *MIR-level* — results reflect post-optimization IR,
-    not the source structure programmers write
-  + *Undirected graphs* — cleanup/unwind edges removed
-    (analogous to Java ignoring exceptions)
-  + *No formal bound* — MIR erases source-level nesting,
-    preventing a Thorup-style proof
+  + *Scope* — stdlib only
+  + *Single configuration* — one compiler + target
+  + *MIR-level* — compiler IR, not source structure
+  + *Undirected graphs* — unwind edges removed, like Java exceptions
+  + *No formal bound* — MIR erases source-level nesting
 ]
 
 #tslide(title: "Future Work")[
-  - *Broader corpus*: analyse popular crates from crates.io
-  - *HIR-level analysis*: study Rust's High-level IR for
-    source-level comparison with Java
-  - *Restricted fragments*: Rust without labeled breaks or async —
-    derive Thorup-style theoretical bounds
-  - *Compiler integration*: prototype treewidth-based optimizations
-    in the Rust compiler
+  - *Broader corpus*: analyse crates beyond the stdlib
+  - *HIR-level analysis*: compare Rust to Java at source level
+  - *Restricted fragments*: derive Thorup-style bounds for Rust subsets
+  - *Compiler integration*: prototype treewidth-aware optimizations
 ]
