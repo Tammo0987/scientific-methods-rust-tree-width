@@ -6,7 +6,7 @@
 
 #section-slide("Results", subtitle: "Experimental Findings")
 
-#tslide(title: "Functions")[
+#tslide(title: "Setup")[
   - Target: Rust standard library for `aarch64-apple-darwin`
   - Total: 27,997
   - Safe: 22,273
