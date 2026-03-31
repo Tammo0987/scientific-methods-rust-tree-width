@@ -7,10 +7,10 @@
 #section-slide("Introduction", subtitle: "Motivation & Background")
 
 #tslide(title: "What Is This About?")[
-  - Compilers use *control-flow graphs* (CFGs) to represent program structure
+  - Compilers use *control-flow graphs* (CFGs) to represent execution structure of a program
   - *Treewidth* measures how close a graph is to being a tree
-  - Low treewidth $=>$ NP-hard graph problems become tractable
-    - e.g.\ register allocation, data-flow analysis
+  - Low treewidth $=>$ NP-hard problems admit to linear time
+    - e.g. register allocation & data-flow analysis 
 
   #v(0.6em)
   #callout[
@@ -19,12 +19,12 @@
 ]
 
 #tslide(title: "Recap — Treewidth")[
-  A *tree decomposition* of graph $G$ maps nodes into _bags_ on a tree:
+  A *tree decomposition* of graph maps nodes into _bags_ on a tree:
 
   #v(0.3em)
 
   + Every node appears in at least one bag
-  + Every edge's endpoints share a bag
+  + Every edge's endpoints share at least one bag
   + Bags containing a given node form a connected subtree
 
   #v(0.5em)
@@ -35,19 +35,28 @@
 ]
 
 #tslide(title: "Prior Work — Thorup (1998)")[
-  - Structured programs without `goto` have *bounded* CFG treewidth
-  - Goto-free C: treewidth *$<= 6$*
+  - Structured programs (`goto`-free) have *bounded* CFG treewidth
+  - Results: 
+    #text(size: 0.82em)[- Modula-2 $<= 5$]
+    #text(size: 0.82em)[- Algol/Pascal $<= 3$]
+    #text(size: 0.82em)[- Goto-free C: treewidth *$<= 6$*]
   - Each _flow-affecting construct_ (break, continue, return, short-circuit)
     raises treewidth by at most 1
-  - Base: series-parallel graph, treewidth *2*
 
   #v(0.4em)
-  #text(fill: subtext, size: 0.82em)[Also: Algol/Pascal $<= 3$, Modula-2 $<= 5$]
 ]
 
 #tslide(title: "Prior Work — Gustedt et al. (2002)")[
-  Empirical study on *Java standard library* (9,387 methods):
+  - Empirical study on *Java standard library* (9,387 methods)
+  - No `goto`-statements, but labelled break and continue statements are equivalent to `goto`
+  - Restricting label-free subset
+  - Theoretical treewidth: $2 + 4 = 6$
+    - Exactly 4 FAC's & Base treewidth of 2, since the CFG is series-parallel
+]
 
+
+#tslide(title: "Prior Work — Gustedt et al. (2002)")[
+  Empirical study on *Java standard library* (9,387 methods)
   #v(0.3em)
 
   #set text(size: 0.85em)
@@ -61,7 +70,6 @@
   #v(0.4em)
   #set text(size: 1em)
   - Theoretical bound of 6 is *never reached* in practice
-  - Labeled `break`/`continue` can make treewidth *arbitrarily high*
 ]
 
 #tslide(title: "Our Contribution")[
@@ -69,8 +77,8 @@
 
   #v(0.3em)
 
-  - Extract CFGs from the compiler's own representation (*MIR*)
+  - Tool to extract CFGs from the compiler's own representation (*MIR*)
   - Compute treewidth of all functions in the *Rust standard library*
-  - Compare safe vs.\ unsafe Rust
+  - Compare safe & unsafe Rust
   - Contextualize against the Java results
 ]
