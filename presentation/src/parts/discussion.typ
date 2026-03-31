@@ -23,22 +23,19 @@
 #section-slide("Discussion", subtitle: "Limitations & Future Work")
 
 #tslide(title: "Why the Numbers Differ — Decomposition")[
+  #set text(size: 0.89em)
   Thorup/Gustedt analyse at *source level*:
   - Structured control flow is preserved
-  - Entry/exit stay together in the decomposition
-  - Even trivial methods start at treewidth $>= 2$
+  - Entry/exit stay together, so methods start at treewidth $>= 2$
 
-  #v(0.4em)
+  #v(0.05em)
 
   We analyse at *MIR level*:
   - Straight-line code is collapsed into basic blocks
-  - Flat CFG, no explicit nesting structure
-  - Trivial functions can have treewidth *0* or *1*
+  - Trivial functions can have *treewidth 0* or *1*
 
-  #v(0.4em)
   #callout[
-    The approaches measure *different things* — a direct numerical
-    comparison requires caution.
+    Direct numerical comparison requires caution.
   ]
 ]
 
