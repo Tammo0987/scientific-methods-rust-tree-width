@@ -24,7 +24,7 @@
   #v(0.3em)
 
   + Every node appears in at least one bag
-  + Every edge's endpoints share at least one bag
+  + Every edge's endpoints share one bag
   + Bags containing a given node form a connected subtree
 
   #v(0.5em)
